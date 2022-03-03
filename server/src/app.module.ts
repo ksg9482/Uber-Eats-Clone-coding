@@ -1,23 +1,38 @@
 import { Module } from '@nestjs/common';
+import * as Joi from 'joi';//자바스크립트 패키지라 몽땅 가져오는 것. export되지 않았음
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { GraphQLModule } from '@nestjs/graphql';
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { join } from 'path/posix';
 import { RestaurantsModule } from './restaurants/restaurants.module';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath: process.env.NODE_ENV === "dev" ? ".env.dev" : ".env.test",
+      ignoreEnvFile: process.env.NODE_ENV === 'prod', //produnction환경일 때는 configModule이 이 환경변수 파일을 무시한다
+      validationSchema: Joi.object({
+        NODE_ENV: Joi.string().valid('dev', 'prod').required(),
+        DB_HOST: Joi.string().required(),
+        DB_PORT: Joi.string().required(),
+        DB_USERNAME: Joi.string().required(),
+        DB_PASSWORD: Joi.string().required(),
+        DB_NAME: Joi.string().required(),
+      })
+    }),
     GraphQLModule.forRoot<ApolloDriverConfig>({//nestjs에 graphql을 적용함
       driver: ApolloDriver,
       autoSchemaFile: true
     }),
     TypeOrmModule.forRoot({
       type: "postgres",
-      host: "localhost", //wsl2때문. 보통 localhost
-      port: 5432,
-      username: "master",
-      password: "test",
-      database: "yuber-eats",
+      host: process.env.DB_HOST, //wsl2때문. 보통 localhost
+      port: +process.env.DB_PORT,
+      username: process.env.DB_USERNAME,
+      password: process.env.DB_PASSWORD,
+      database: process.env.DB_NAME,
       synchronize: true, //데이터베이스를 내 모듈의 현재 상태로 마이그레이션한다는 뜻
       logging: true
     }),
