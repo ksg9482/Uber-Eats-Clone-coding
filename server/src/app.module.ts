@@ -6,6 +6,9 @@ import { TypeOrmModule } from '@nestjs/typeorm'
 import { join } from 'path/posix';
 import { RestaurantsModule } from './restaurants/restaurants.module';
 import { ConfigModule } from '@nestjs/config';
+import { Restaurant } from './restaurants/entities/restaurant.entity';
+import { UsersModule } from './users/users.module';
+import { CommonModule } from './common/common.module';
 
 @Module({
   imports: [
@@ -33,10 +36,15 @@ import { ConfigModule } from '@nestjs/config';
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
-      synchronize: true, //데이터베이스를 내 모듈의 현재 상태로 마이그레이션한다는 뜻
-      logging: true
+      synchronize: process.env.NODE_ENV !== 'prod', //데이터베이스를 내 모듈의 현재 상태로 마이그레이션한다는 뜻
+      //process.env.NODE_ENV !== 'prod'로 하면 prod가 아닐때만 true
+      logging: true,
+      entities: [/*Restaurant*/], //첫번째 방법
+      
     }),
-    RestaurantsModule],
+    //RestaurantsModule,
+    UsersModule,
+    CommonModule],
   controllers: [],
   providers: [],
 })
