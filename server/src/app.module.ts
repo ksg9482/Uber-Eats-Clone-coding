@@ -9,11 +9,12 @@ import { ConfigModule } from '@nestjs/config';
 import { Restaurant } from './restaurants/entities/restaurant.entity';
 import { UsersModule } from './users/users.module';
 import { CommonModule } from './common/common.module';
+import { JwtModule } from './jwt/jwt.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
-      isGlobal: true,
+      isGlobal: true,//글로벌 모듈이면 따로 import해주지 않아도 됨
       envFilePath: process.env.NODE_ENV === "dev" ? ".env.dev" : ".env.test",
       ignoreEnvFile: process.env.NODE_ENV === 'prod', //produnction환경일 때는 configModule이 이 환경변수 파일을 무시한다
       validationSchema: Joi.object({
@@ -23,6 +24,7 @@ import { CommonModule } from './common/common.module';
         DB_USERNAME: Joi.string().required(),
         DB_PASSWORD: Joi.string().required(),
         DB_NAME: Joi.string().required(),
+        SECRET_KEY: Joi.string().required()
       })
     }),
     GraphQLModule.forRoot<ApolloDriverConfig>({//nestjs에 graphql을 적용함
@@ -43,8 +45,10 @@ import { CommonModule } from './common/common.module';
       
     }),
     //RestaurantsModule,
+    JwtModule.forRoot(),
     UsersModule,
-    CommonModule],
+    CommonModule
+    ],
   controllers: [],
   providers: [],
 })
