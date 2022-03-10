@@ -13,8 +13,11 @@ export class JwtService {
         ) {}
 
         sign(userId: number): string {
-            return jwt.sign({id:userId}, /*this.configService.get('PRIVATE_KEY')*/this.options.privateKey)
+            return jwt.sign({id: userId}, /*this.configService.get('PRIVATE_KEY')*/this.options.privateKey)
         }
 
+        verify(token: string) {
+            return jwt.verify(token, this.options.privateKey);
+        }
         //주석과 같은 방법을 이용해서도 할 수 있다. 글로벌 모듈을 이용하는 장점.
 }

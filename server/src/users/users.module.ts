@@ -6,6 +6,7 @@ import { UsersResolver } from './users.resolever';
 
 @Module({
     imports:[TypeOrmModule.forFeature([User])],//글로벌 모듈로 해놔서 안넣어도 됨
-    providers: [UsersResolver, UsersService]
+    providers: [UsersResolver, UsersService],
+    exports:[UsersService]
 })
 export class UsersModule {}

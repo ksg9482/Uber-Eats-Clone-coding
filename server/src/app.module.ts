@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/common';
 import * as Joi from 'joi';//자바스크립트 패키지라 몽땅 가져오는 것. export되지 않았음
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { GraphQLModule } from '@nestjs/graphql';
@@ -10,6 +10,8 @@ import { Restaurant } from './restaurants/entities/restaurant.entity';
 import { UsersModule } from './users/users.module';
 import { CommonModule } from './common/common.module';
 import { JwtModule } from './jwt/jwt.module';
+import { JwtMiddleware } from './jwt/jwt.middleware';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -29,7 +31,8 @@ import { JwtModule } from './jwt/jwt.module';
     }),
     GraphQLModule.forRoot<ApolloDriverConfig>({//nestjs에 graphql을 적용함
       driver: ApolloDriver,
-      autoSchemaFile: true
+      autoSchemaFile: true,
+      context:({req}) => ({user: req['user']})//request user를 graphql resolver의 context를 통해 공유하는 것
     }),
     TypeOrmModule.forRoot({
       type: "postgres",
@@ -49,12 +52,23 @@ import { JwtModule } from './jwt/jwt.module';
       privateKey: process.env.PRIVATE_KEY
     }),
     UsersModule,
-    CommonModule
+    //CommonModule,
+    //AuthModule
     ],
   controllers: [],
   providers: [],
 })
-export class AppModule { }
+export class AppModule implements NestModule{
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+    .apply(JwtMiddleware)
+    .forRoutes({
+      path: "/graphql", //다적용이면 *, graphql에 적용이면 "/graphql"로 한다. 
+      method: RequestMethod.POST
+    })
+    //exclude를 쓰면 특정 route를 제외할 수 있다
+  }
+ }
 
 /*wsl2 를 사용하시며 윈도우에서 postgreSQL을 설치하시는 분들이 하셔야 할 것:
 
