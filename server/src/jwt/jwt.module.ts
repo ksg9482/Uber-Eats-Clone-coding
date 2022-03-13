@@ -13,13 +13,13 @@ export class JwtModule {
             exports: [{ //위는 이하 내용을 함축한 것.
                 provide: JwtService,
                 useClass: JwtService
-            },{
+            },
+        ],
+            providers: [JwtService,{
                 provide: CONFIG_OPTIONS,
                 useValue: options
-              },
-        
-        ],
-            providers: [JwtService]
+              }
+            ]
         }
     }
 }

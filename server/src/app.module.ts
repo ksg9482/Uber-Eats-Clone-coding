@@ -12,6 +12,8 @@ import { CommonModule } from './common/common.module';
 import { JwtModule } from './jwt/jwt.module';
 import { JwtMiddleware } from './jwt/jwt.middleware';
 import { AuthModule } from './auth/auth.module';
+import { User } from './users/entities/user.entity';
+import { Verification } from './users/entities/verification.entitiy';
 
 @Module({
   imports: [
@@ -44,7 +46,7 @@ import { AuthModule } from './auth/auth.module';
       synchronize: process.env.NODE_ENV !== 'prod', //데이터베이스를 내 모듈의 현재 상태로 마이그레이션한다는 뜻
       //process.env.NODE_ENV !== 'prod'로 하면 prod가 아닐때만 true
       logging: true,
-      entities: [/*Restaurant*/], //첫번째 방법
+      entities: [/*Restaurant*/User, Verification], //첫번째 방법
       
     }),
     //RestaurantsModule,
