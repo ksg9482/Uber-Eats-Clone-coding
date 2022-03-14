@@ -24,7 +24,7 @@ export class User extends CoreEntity{
     @IsEmail()
     email: string;
 
-    @Column()
+    @Column({select:false}) //재해시를 막는 첫번째 방법. 패스워드가 나가지 않도록 한다. 즉, typeorm이 이 항목이 업데이트 되었다 보지 않도록 한다
     @Field(type => String)
     @IsString()
     password: string;
@@ -41,11 +41,14 @@ export class User extends CoreEntity{
     @BeforeInsert()
     @BeforeUpdate()
     async hashPassword():Promise<void>{
-        try {
-            this.password = await bcrypt.hash(this.password, 10)
-        } catch (error) {
-            console.log(error);
-            throw new InternalServerErrorException()
+        //재해시를 막는 두번째 방법. password가 있을때만 hash하도록
+        if(this.password){
+            try {
+                this.password = await bcrypt.hash(this.password, 10)
+            } catch (error) {
+                console.log(error);
+                throw new InternalServerErrorException()
+            }
         }
     }
 

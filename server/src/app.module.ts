@@ -14,6 +14,7 @@ import { JwtMiddleware } from './jwt/jwt.middleware';
 import { AuthModule } from './auth/auth.module';
 import { User } from './users/entities/user.entity';
 import { Verification } from './users/entities/verification.entitiy';
+import { MailModule } from './mail/mail.module';
 
 @Module({
   imports: [
@@ -28,13 +29,16 @@ import { Verification } from './users/entities/verification.entitiy';
         DB_USERNAME: Joi.string().required(),
         DB_PASSWORD: Joi.string().required(),
         DB_NAME: Joi.string().required(),
-        PRIVATE_KEY: Joi.string().required()
+        PRIVATE_KEY: Joi.string().required(),
+        MAILGUN_API_KEY: Joi.string().required(),
+        MAILGUN_DOMAIN_NAME: Joi.string().required(),
+        MAILGUN_FROMEMAIL: Joi.string().required()
       })
     }),
     GraphQLModule.forRoot<ApolloDriverConfig>({//nestjs에 graphql을 적용함
       driver: ApolloDriver,
       autoSchemaFile: true,
-      context:({req}) => ({user: req['user']})//request user를 graphql resolver의 context를 통해 공유하는 것
+      context: ({ req }) => ({ user: req['user'] })//request user를 graphql resolver의 context를 통해 공유하는 것
     }),
     TypeOrmModule.forRoot({
       type: "postgres",
@@ -47,30 +51,35 @@ import { Verification } from './users/entities/verification.entitiy';
       //process.env.NODE_ENV !== 'prod'로 하면 prod가 아닐때만 true
       logging: true,
       entities: [/*Restaurant*/User, Verification], //첫번째 방법
-      
+
     }),
     //RestaurantsModule,
     JwtModule.forRoot({
       privateKey: process.env.PRIVATE_KEY
     }),
+    MailModule.forRoot({
+      apiKey: process.env.MAILGUN_API_KEY,
+      domain: process.env.MAILGUN_DOMAIN_NAME,
+      fromEmail: process.env.MAILGUN_FROMEMAIL
+    }),
     UsersModule,
     //CommonModule,
     //AuthModule
-    ],
+  ],
   controllers: [],
   providers: [],
 })
-export class AppModule implements NestModule{
+export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer
-    .apply(JwtMiddleware)
-    .forRoutes({
-      path: "/graphql", //다적용이면 *, graphql에 적용이면 "/graphql"로 한다. 
-      method: RequestMethod.POST
-    })
+      .apply(JwtMiddleware)
+      .forRoutes({
+        path: "/graphql", //다적용이면 *, graphql에 적용이면 "/graphql"로 한다. 
+        method: RequestMethod.POST
+      })
     //exclude를 쓰면 특정 route를 제외할 수 있다
   }
- }
+}
 
 /*wsl2 를 사용하시며 윈도우에서 postgreSQL을 설치하시는 분들이 하셔야 할 것:
 
