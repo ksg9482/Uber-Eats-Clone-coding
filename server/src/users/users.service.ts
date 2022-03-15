@@ -6,7 +6,7 @@ import { LoginInput, LoginOutput } from "./dtos/login.dto";
 import { User } from "./entities/user.entity";
 import { JwtService } from "src/jwt/jwt.service";
 import { EditProfileInput, EditProfileOutput } from "./dtos/edit-profile.dto";
-import { Verification } from "./entities/verification.entitiy";
+import { Verification } from "./entities/verification.entity";
 import { VerifyEmailOutput } from "./dtos/verify-email.dto";
 import { UserProfileOutput } from "./dtos/user-profile.dto";
 import { MailService } from "src/mail/mail.service";
@@ -26,13 +26,14 @@ export class UsersService {
         // 배열로 한 것 처럼 객체로도 비슷하게 만들 수 있음
         try {
             const exists = await this.users.findOne({ email }); //이미 존재(exist)함
+            console.log(exists)
             if (exists) {
                 return { ok: false, error: 'There is a user with that email already' };
             }
             const user = await this.users.save(this.users.create({ email, password, role }))
             
             const verification = await this.verifications.save(this.verifications.create({
-                code: "test", 
+                //code: "test", 
                 user
             }))
             this.mailService.sendVerificationEmail(user.email, verification.code)
@@ -73,19 +74,17 @@ export class UsersService {
         } catch (error) {
             return {
                 ok: false,
-                error
+                error: "Can't log user in"
             }
         }
     }
     async findById(id: number): Promise<UserProfileOutput> {
         try {
-            const user = await this.users.findOne({ id });
-            if (user) {
+            const user = await this.users.findOneOrFail({ id });
                 return {
                     ok: true, 
                     user: user
                 } ;
-            }
         } catch (error) {
             return { ok: false, error: 'User Not Found' };
         }
@@ -132,7 +131,7 @@ export class UsersService {
         }
         return {ok:false, error: "Verification not found"};
         } catch (error) {
-            return {ok:false, error};
+            return {ok:false, error: "Could not verify email"};
         }
         
     }

@@ -19,7 +19,7 @@ export class Verification extends CoreEntity {
 
     @BeforeInsert()
     createCode(): void {
-        this.code = uuidv4;
+        this.code = uuidv4();
     }
 
 }

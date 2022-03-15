@@ -13,7 +13,7 @@ import { JwtModule } from './jwt/jwt.module';
 import { JwtMiddleware } from './jwt/jwt.middleware';
 import { AuthModule } from './auth/auth.module';
 import { User } from './users/entities/user.entity';
-import { Verification } from './users/entities/verification.entitiy';
+import { Verification } from './users/entities/verification.entity';
 import { MailModule } from './mail/mail.module';
 
 @Module({

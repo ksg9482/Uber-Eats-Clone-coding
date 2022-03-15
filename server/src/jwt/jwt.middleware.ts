@@ -1,6 +1,6 @@
 import { Injectable, NestMiddleware } from "@nestjs/common";
 import { NextFunction, Request, Response } from "express";
-import { UsersService } from "src/users/user.service";
+import { UsersService } from "src/users/users.service";
 import { JwtService } from "./jwt.service";
 
 @Injectable() //이렇게 안하면 dependency injection을 하기 어렵다. Injectable로 안돼있으면 inject 할 수 없다
