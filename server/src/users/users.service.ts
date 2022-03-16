@@ -26,7 +26,7 @@ export class UsersService {
         // 배열로 한 것 처럼 객체로도 비슷하게 만들 수 있음
         try {
             const exists = await this.users.findOne({ email }); //이미 존재(exist)함
-            console.log(exists)
+            //console.log(exists)
             if (exists) {
                 return { ok: false, error: 'There is a user with that email already' };
             }

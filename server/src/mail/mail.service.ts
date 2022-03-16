@@ -13,12 +13,12 @@ export class MailService {
         //this.sendEmail('testing', 'test');
     }
 
-    private async sendEmail(
+    async sendEmail(
         subject: string, 
         //to: string, 
         template: string,
         emailVars: EmailVar[]
-        ) {
+        ): Promise<boolean> {
         const form = new FormData();
         form.append(
             'from',
@@ -28,17 +28,20 @@ export class MailService {
         form.append('template', template);
         emailVars.forEach(eVar => form.append(`${eVar.key}`, eVar.value));
         try {
-            await got(
+            await got.post(
+                //post를 적으면 jest에서 post의 implementation을 mock할 수 있고, post가 테스트에 통과하지 못하도록 만들 수 있다
                 `https://api.mailgun.net/v3/${this.options.domain}/messages`, 
                 {
-                method: 'POST',
                 headers: {
-                    Authorization: `basic ${Buffer.from(`api:${this.options.apiKey}`).toString('base64')}`
+                    Authorization: `basic ${Buffer.from(
+                        `api:${this.options.apiKey}`
+                        ).toString('base64')}`
                 },
                 body: form
             });
+            return true
         } catch (error) {
-            console.log(error)
+            return false
         }
        
     }
