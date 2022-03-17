@@ -56,7 +56,7 @@ export class UsersService {
             if (!user) {
                 return {
                     ok: false,
-                    error: 'User noy found'
+                    error: 'User not found'
                 }
             }
             const passwordCorrect = await user.checkPassword(password);
@@ -83,7 +83,7 @@ export class UsersService {
             const user = await this.users.findOneOrFail({ id });
                 return {
                     ok: true, 
-                    user: user
+                    user
                 } ;
         } catch (error) {
             return { ok: false, error: 'User Not Found' };
@@ -99,6 +99,8 @@ export class UsersService {
         if (email) {
             user.email = email;
             user.verified = false;
+            await this.verifications.delete({ user: { id: user.id } });
+            //user의 id가 user.id를 갖는 모든 verification을 삭제
             const verification = await this.verifications.save(this.verifications.create({ user }))
             this.mailService.sendVerificationEmail(user.email, verification.code)
 

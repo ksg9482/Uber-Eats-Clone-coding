@@ -156,14 +156,14 @@ describe("UserService", () => {
             );
             expect(result).toEqual({
                 ok: false,
-                error: 'User noy found'
+                error: 'User not found'
             })
         })
 
         it('should fail if the password is wrong', async () => {
             const mockedUser = {
                 checkPassword: jest.fn(() => Promise.resolve(false/*true*/))
-                //promise를 return하는 mock function. await하고 결과적으로 true가 나온다
+                //promise를 return하는 mock function. await하고 결과적으로 false가 나온다
                 //mockResolvedValue와 같은 역할
             };
             usersRepository.findOne.mockResolvedValue(mockedUser);
