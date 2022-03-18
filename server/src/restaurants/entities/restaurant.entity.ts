@@ -1,39 +1,43 @@
 import { Field, InputType, ObjectType } from "@nestjs/graphql";
-import { number } from "joi";
-import {IsBoolean, IsOptional, IsString, Length} from 'class-validator'
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
-@InputType({isAbstract: true})//인풋타입을 써도 되긴 하는데 오브젝트타입, 인풋타입 두개 스키마가 같은 이름으로 생김 .오류.isAbstract: true은 복사해서 쓰겠다는 뜻. extend해서 쓰겠다 
+import { IsString, Length } from 'class-validator'
+import { Column, Entity, ManyToMany, ManyToOne, OneToMany } from "typeorm";
+import { CoreEntity } from "src/common/entities/core.entity";
+import { Category } from "./category.entity";
+import { User } from "src/users/entities/user.entity";
+@InputType('restaurantInputType',{isAbstract: true})//인풋타입을 써도 되긴 하는데 오브젝트타입, 인풋타입 두개 스키마가 같은 이름으로 생김 .오류.isAbstract: true은 복사해서 쓰겠다는 뜻. extend해서 쓰겠다 
 @ObjectType() //graphql을 위한 것
 @Entity() //typeorm을 위한 것
-export class Restaurant {
+export class Restaurant extends CoreEntity {
 
-    @PrimaryGeneratedColumn()
-    @Field(type => Number) //String도 가능
-    id: number
 
     @Field(type => String)
     @Column()
     @IsString()
+    @Length(1)
     name: string
 
-    @Field(type => Boolean, {defaultValue: true}/*{nullable: true}로 하면 유무 신경안씀 */)
-    @Column({default: true})
-    @IsOptional()//해당 필드를 보내거나 보내지 않을 수 있다는 의미
-    @IsBoolean()
-    isVegan: boolean
+    @Field(type => String)
+    @Column()
+    @IsString()
+    coverImg: string
 
     @Field(type => String)
     @Column()
     @IsString()
     address: string
 
-    @Field(type => String)
-    @Column()
-    @IsString()
-    ownersName: string
+    @Field(type => Category, {nullable: true})
+    @ManyToOne( //레스토랑은 하나의 카테고리를 갖는다
+    type => Category,
+    category => category.restaurants,
+    {nullable: true, onDelete:'SET NULL'} //카테코리를 지울때 레스토랑이 지워지지 않기 위해
+    )
+    category: Category
 
-    @Field(type => String)
-    @Column()
-    @IsString()
-    categoryName: string
+    @Field(type => User, {nullable: true})
+    @ManyToOne(
+    type => User,
+    user => user.restaurants 
+    )
+    owner: User
 }

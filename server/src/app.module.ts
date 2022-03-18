@@ -15,6 +15,7 @@ import { AuthModule } from './auth/auth.module';
 import { User } from './users/entities/user.entity';
 import { Verification } from './users/entities/verification.entity';
 import { MailModule } from './mail/mail.module';
+import { Category } from './restaurants/entities/category.entity';
 
 @Module({
   imports: [
@@ -50,7 +51,7 @@ import { MailModule } from './mail/mail.module';
       synchronize: process.env.NODE_ENV !== 'prod', //데이터베이스를 내 모듈의 현재 상태로 마이그레이션한다는 뜻
       //process.env.NODE_ENV !== 'prod'로 하면 prod가 아닐때만 true
       logging: process.env.NODE_ENV !== 'prod' && process.env.NODE_ENV !== 'test',
-      entities: [/*Restaurant*/User, Verification], //첫번째 방법
+      entities: [User, Verification, Restaurant, Category], //첫번째 방법
 
     }),
     //RestaurantsModule,
@@ -63,6 +64,7 @@ import { MailModule } from './mail/mail.module';
       fromEmail: process.env.MAILGUN_FROMEMAIL
     }),
     UsersModule,
+    RestaurantsModule
     //CommonModule,
     //AuthModule
   ],
