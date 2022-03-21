@@ -108,6 +108,7 @@ describe('UserModule (e2e)', () => {
     });
 
   });
+  
   describe('login', () => {
     it('should login with correct credentials', () => {
       return publicTest(`
