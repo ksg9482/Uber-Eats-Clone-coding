@@ -1,6 +1,6 @@
 import { Field, InputType, ObjectType } from "@nestjs/graphql";
 import { IsString, Length } from 'class-validator'
-import { Column, Entity, ManyToMany, ManyToOne, OneToMany } from "typeorm";
+import { Column, Entity, ManyToMany, ManyToOne, OneToMany, RelationId } from "typeorm";
 import { CoreEntity } from "src/common/entities/core.entity";
 import { Category } from "./category.entity";
 import { User } from "src/users/entities/user.entity";
@@ -41,4 +41,10 @@ export class Restaurant extends CoreEntity {
     {onDelete:"CASCADE"}
     )
     owner: User
+
+    @RelationId((restaurant: Restaurant) => restaurant.owner)
+    ownerId: number
+    /*아이디를 받아와야 하는데 loadRelationIds로 받는건 number로 온다
+    그런데 owner는 타입이 User기 때문에 맞지 않는다. owner 타입을 User | number로 바꾸는 건 이상하다.
+    따라서 RelationId 데코레이터를 사용한다.*/
 }

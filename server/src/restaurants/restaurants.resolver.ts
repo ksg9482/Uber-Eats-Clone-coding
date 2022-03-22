@@ -1,10 +1,15 @@
 import { SetMetadata } from "@nestjs/common";
-import { Args, Mutation, Query, Resolver } from "@nestjs/graphql";
+import { Args, Int, Mutation, Parent, Query, ResolveField, Resolver } from "@nestjs/graphql";
 import { number } from "joi";
 import { AuthUser } from "src/auth/auth-user.decorator";
 import { Role } from "src/auth/role.decorator";
-import { User, UserRole } from "src/users/entities/user.entity";
+import { User } from "src/users/entities/user.entity";
+import { AllCategoriesOutPut } from "./dtos/all-categories.dto";
+import { CategoryInput, CategoryOutput } from "./dtos/category.dto";
 import { CreateRestaurantInput, CreateRestaurantOutput } from "./dtos/create-restaurant.dto";
+import { DeleteRestaurantInput, DeleteRestaurantOutput } from "./dtos/delete-retaurant.dto";
+import { EditRestaurantInput, EditRestaurantOutput } from "./dtos/edit-reastaurant.dto";
+import { Category } from "./entities/category.entity";
 import { Restaurant } from "./entities/restaurant.entity";
 import { RestaurantsService } from "./restaurants.service";
 
@@ -23,14 +28,48 @@ export class RestaurantsResolver {
         @AuthUser() authUser: User,
         @Args('input') CreateRestaurantInput: CreateRestaurantInput
     ): Promise<CreateRestaurantOutput> {
-
         return this.restaurantsService.createRestaurant(
             authUser, 
             CreateRestaurantInput
             );
-
-
-
     }
 
+    @Mutation(returns => EditRestaurantOutput)
+    @Role(['Owner'])
+    editRestaurant(
+        @AuthUser() owner: User,
+        @Args('input') editRestaurantInput: EditRestaurantInput
+    ): Promise<EditRestaurantOutput> {
+        return this.restaurantsService.editRestaurant(owner, editRestaurantInput);
+    };
+
+    @Mutation(returns => DeleteRestaurantOutput)
+    @Role(['Owner'])
+    deleterestaurant(
+        @AuthUser() owner: User,
+        @Args('input') deleteRestaurantInput: DeleteRestaurantInput
+    ): Promise<DeleteRestaurantOutput> {
+        return this.restaurantsService.deleteRestaurant(owner, deleteRestaurantInput)
+    }
+}
+
+@Resolver(of => Category)
+export class CategoryResolver {
+    constructor(private readonly restaurantsService: RestaurantsService) { }
+
+    @ResolveField(type => Int)
+    //매 request마다 계산된 field를 만들어 준다
+    restaurantCount(@Parent() category: Category): Promise<number> {
+        return this.restaurantsService.countRestaurants(category)
+    }
+
+    @Query(type => AllCategoriesOutPut)
+    allCategories(): Promise<AllCategoriesOutPut> {
+        return this.restaurantsService.allCategories();
+    };
+
+    @Query(type => CategoryOutput)
+    category(@Args('input') categoryInput: CategoryInput): Promise<CategoryOutput> {
+        return this.restaurantsService.findCategoryBySlug(categoryInput)
+    }
 }

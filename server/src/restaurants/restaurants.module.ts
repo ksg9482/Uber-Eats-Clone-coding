@@ -1,13 +1,13 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Category } from './entities/category.entity';
 import { Restaurant } from './entities/restaurant.entity';
-import { RestaurantsResolver } from './restaurants.resolver';
+import { CategoryRepository } from './repositories/category.repository';
+import { CategoryResolver, RestaurantsResolver } from './restaurants.resolver';
 import { RestaurantsService } from './restaurants.service';
 
 @Module({
-    imports: [TypeOrmModule.forFeature([Restaurant, Category])],
+    imports: [TypeOrmModule.forFeature([Restaurant, CategoryRepository])],
     //forFeature는 typeOrmModule이 특정 feature를 import할 수 있게 해준다
-    providers:[RestaurantsResolver, RestaurantsService]
+    providers:[RestaurantsResolver, CategoryResolver, RestaurantsService]
 })
 export class RestaurantsModule {}
