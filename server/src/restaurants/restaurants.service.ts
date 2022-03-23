@@ -1,12 +1,15 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { User } from "src/users/entities/user.entity";
-import { Repository } from "typeorm";
+import { Like, Raw, Repository } from "typeorm";
 import { AllCategoriesOutPut } from "./dtos/all-categories.dto";
 import { CategoryInput, CategoryOutput } from "./dtos/category.dto";
 import { CreateRestaurantInput, CreateRestaurantOutput } from "./dtos/create-restaurant.dto";
 import { DeleteRestaurantInput, DeleteRestaurantOutput } from "./dtos/delete-retaurant.dto";
 import { EditRestaurantInput, EditRestaurantOutput } from "./dtos/edit-reastaurant.dto";
+import { RestaurantInput, RestaurantOutput } from "./dtos/restaurant.dto";
+import { RestaurantsInput, RestaurantsOutput } from "./dtos/restaurants.dto";
+import { SearchRestaurantInput, SearchRestaurantOutput } from "./dtos/search-restaurant.dto";
 import { Category } from "./entities/category.entity";
 import { Restaurant } from "./entities/restaurant.entity";
 import { CategoryRepository } from "./repositories/category.repository";
@@ -19,7 +22,6 @@ export class RestaurantsService {
         private readonly categories: CategoryRepository//레포지토리를 따로 만들었으면 그걸로 해야 됨
         ) {}
 
-    
     
     async createRestaurant(
         owner: User,
@@ -181,6 +183,77 @@ export class RestaurantsService {
             return {
                 ok: false,
                 error: 'could not load category'
+            }
+        }
+    };
+
+    async allRestaurants(
+        {page}: RestaurantsInput
+        ): Promise<RestaurantsOutput> {
+            try {
+                const [restaurants, totalResults] = await this.restaurants.findAndCount({
+                    take: 25,
+                    skip: (page - 1) *25
+                });
+                
+                return {
+                    ok:true,
+                    results: restaurants,
+                    totalPages: Math.ceil(totalResults / 25),
+                    totalResults
+                }
+            } catch (error) {
+                return {
+                    ok: false,
+                    error:'could not load categories'
+                }
+            }
+    };
+
+    async findRestaurantById(
+        {restaurantId}: RestaurantInput
+    ): Promise<RestaurantOutput> {
+        try {
+            const restaurant = await this.restaurants.findOne(restaurantId)
+            if(!restaurant) {
+                return {
+                    ok: false,
+                    error: 'restaurant not found'
+                }
+            }
+            return {
+                ok:true,
+                restaurant
+            }
+        } catch (error) {
+            return {
+                ok: false,
+                error: 'could not find restaurant'
+            }
+        }
+    }
+
+    async searchRestaurantByName(
+        {query, page}: SearchRestaurantInput
+    ): Promise<SearchRestaurantOutput> {
+        try {
+            const [restaurants, totalResults] = await this.restaurants.findAndCount({
+                where: {
+                    name: Raw(name => `${name} ILIKE '${query}'`)
+                }
+                //LIKE는 다음에 나오는 value를 찾아준다(LIKE '200%' -> 200으로 시작하는 값을 찾는다, '%200% -> 200포함된 값)
+                //ILIKE는 대소문자를 구분하지 않게 해준다
+            })
+            return {
+                ok:true,
+                restaurants,
+                totalResults,
+                totalPages:Math.ceil(totalResults / 25)
+            }
+        } catch (error) {
+            return {
+                ok:false,
+                error:'could not search for restaurants'
             }
         }
     }
