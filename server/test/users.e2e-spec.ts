@@ -335,6 +335,7 @@ describe('UserModule (e2e)', () => {
           expect(email).toBe(NEW_EMAIL);
         });
     });
+    
   });
 
   describe('verifyEmail', () => {

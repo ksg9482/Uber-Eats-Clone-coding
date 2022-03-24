@@ -5,6 +5,7 @@ import * as bcrypt from "bcrypt"
 import { InternalServerErrorException } from "@nestjs/common";
 import { IsBoolean, IsEmail, IsEnum, IsString } from "class-validator";
 import { Restaurant } from "src/restaurants/entities/restaurant.entity";
+import { Order } from "src/orders/entities/order.entity";
 
 //type UserRole = 'client' | 'owner' | 'delivery';
 export enum UserRole {
@@ -43,8 +44,23 @@ export class User extends CoreEntity{
     @Field(type => [Restaurant])
     @OneToMany( //한명의 오너는 여러 레스토랑을 가질 수 있다
         type => Restaurant, 
-        restaurant => restaurant.owner)
-    restaurants: Restaurant[]
+        restaurant => restaurant.owner
+        )
+    restaurants: Restaurant[];
+
+    @Field(type => [Order])
+    @OneToMany( //한명의 유저는 여러 주문을 가질 수 있다
+        type => Order, 
+        order => order.customer
+        )
+    orders: Order[];
+
+    @Field(type => [Order])
+    @OneToMany( 
+        type => Order, 
+        order => order.driver
+        )
+    rides: Order[];
 
     @BeforeInsert()
     @BeforeUpdate()

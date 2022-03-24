@@ -5,6 +5,7 @@ import { CoreEntity } from "src/common/entities/core.entity";
 import { Category } from "./category.entity";
 import { User } from "src/users/entities/user.entity";
 import { Dish } from "./dish.entity";
+import { Order } from "src/orders/entities/order.entity";
 @InputType('restaurantInputType',{isAbstract: true})//인풋타입을 써도 되긴 하는데 오브젝트타입, 인풋타입 두개 스키마가 같은 이름으로 생김 .오류.isAbstract: true은 복사해서 쓰겠다는 뜻. extend해서 쓰겠다 
 @ObjectType() //graphql을 위한 것
 @Entity() //typeorm을 위한 것
@@ -42,6 +43,13 @@ export class Restaurant extends CoreEntity {
     {onDelete:"CASCADE"}
     )
     owner: User
+
+    @Field(type => [Order])
+    @OneToMany( //한명의 유저는 여러 주문을 가질 수 있다
+        type => Order, 
+        order => order.customer
+        )
+    orders: Order[];
 
     @Field(type => [Dish])
     @OneToMany( //하나의 카테고리는 여러 레스토랑을 가질 수 있다

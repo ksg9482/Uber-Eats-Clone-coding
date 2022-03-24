@@ -4,7 +4,34 @@ import { Column, Entity, ManyToOne, RelationId } from "typeorm";
 import { CoreEntity } from "src/common/entities/core.entity";
 import { Restaurant } from "./restaurant.entity";
 
-@InputType('categoryInputType',{isAbstract: true})//인풋타입을 써도 되긴 하는데 오브젝트타입, 인풋타입 두개 스키마가 같은 이름으로 생김 .오류.isAbstract: true은 복사해서 쓰겠다는 뜻. extend해서 쓰겠다 
+
+@InputType('DishChoiceInputType', { isAbstract: true })
+@ObjectType()
+export class DishChoice {
+    @Field(type => String)
+    name:string;
+
+    @Field(type => Number, {nullable: true})
+    extra?: number;
+};
+//extra를 바꾸고 싶을 수 있기 때문
+
+
+@InputType('DishOptionInputType', { isAbstract: true })
+@ObjectType()
+export class DishOption {
+    @Field(type => String)
+    name:string;
+
+    @Field(type => [DishChoice], {nullable: true})
+    choices?: DishChoice[];
+
+    @Field(type => Number, {nullable: true})
+    extra?: number;
+};
+
+
+@InputType('DishInputType',{isAbstract: true})
 @ObjectType() //graphql을 위한 것
 @Entity() //typeorm을 위한 것
 export class Dish extends CoreEntity {
@@ -20,10 +47,10 @@ export class Dish extends CoreEntity {
     @IsNumber()
     price: string
     
-    @Field(type => String)
-    @Column()
+    @Field(type => String, {nullable: true})
+    @Column({nullable: true})
     @IsString()
-    photo: string
+    photo?: string
 
     @Field(type => String)
     @Column()
@@ -41,5 +68,9 @@ export class Dish extends CoreEntity {
 
     @RelationId((dish: Dish) => dish.restaurant)
     restaurantId: number
+
+    @Field(type => [DishOption], {nullable: true})
+    @Column({type:'json', nullable: true})//json 타입을 저장한다
+    options?: DishOption[]
 
 }
