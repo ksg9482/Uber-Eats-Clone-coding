@@ -1,10 +1,11 @@
 import { Field, Float, InputType, ObjectType, registerEnumType } from "@nestjs/graphql";
-import { IsString, Length } from 'class-validator'
-import { Column, Entity, JoinTable, ManyToMany, ManyToOne, OneToMany, RelationId } from "typeorm";
+import { Column, Entity, JoinTable, ManyToMany, ManyToOne  } from "typeorm";
 import { CoreEntity } from "src/common/entities/core.entity";
 import { User } from "src/users/entities/user.entity";
 import { Restaurant } from "src/restaurants/entities/restaurant.entity";
 import { Dish } from "src/restaurants/entities/dish.entity";
+import { OrderItem } from "./order-item.entity";
+import { IsEnum, IsNumber } from "class-validator";
 
 
 export enum OrderStatus {
@@ -38,29 +39,32 @@ export class Order extends CoreEntity {
         )
     driver?: User;
 
-    @Field(type => Restaurant)
+    @Field(type => Restaurant,{nullable: true})
     @ManyToOne(
         type => Restaurant,
+        //이부분은 반대관계에서 어떻게 되는지 알려주는 역할
         restaurant => restaurant.orders,
         {onDelete:"SET NULL", nullable: true}
         )
-    restaurant: Restaurant;
+    restaurant?: Restaurant;
 
-    @Field(type => [Dish])
-    @ManyToMany(type => Dish)
+    @Field(type => [OrderItem])
+    @ManyToMany(type => OrderItem)
     @JoinTable()
     //JoinTable은 소유(owning)하고 있는 쪽의 relation에 추가한다
     //dish에서 이 dish가 어떤 order에 포함되는지 알수 없음
     //order에서는 어떤 고객이 어떤 dish를 선택했는지 알 수 있다
-    dishes: Dish[];
+    items: OrderItem[];
     //order는 여러 dish를 가질 수 있고, dish도 여러 order를 가질 수 있다
     //many to many
 
     @Column({nullable: true})
     @Field(type => Float, {nullable: true})
+    @IsNumber()
     total?: number;
 
-    @Column({type:'enum', enum: OrderStatus})
+    @Column({type:'enum', enum: OrderStatus, default:OrderStatus.Pending})
     @Field(type => OrderStatus)
+    @IsEnum(OrderStatus)
     status: OrderStatus;
 }

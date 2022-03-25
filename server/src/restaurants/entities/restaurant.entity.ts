@@ -47,7 +47,7 @@ export class Restaurant extends CoreEntity {
     @Field(type => [Order])
     @OneToMany( //한명의 유저는 여러 주문을 가질 수 있다
         type => Order, 
-        order => order.customer
+        order => order.restaurant
         )
     orders: Order[];
 
