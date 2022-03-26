@@ -1,5 +1,5 @@
 import { Field, Float, InputType, ObjectType, registerEnumType } from "@nestjs/graphql";
-import { Column, Entity, JoinTable, ManyToMany, ManyToOne  } from "typeorm";
+import { Column, Entity, JoinTable, ManyToMany, ManyToOne, RelationId  } from "typeorm";
 import { CoreEntity } from "src/common/entities/core.entity";
 import { User } from "src/users/entities/user.entity";
 import { Restaurant } from "src/restaurants/entities/restaurant.entity";
@@ -11,6 +11,7 @@ import { IsEnum, IsNumber } from "class-validator";
 export enum OrderStatus {
     Pending = 'Pending',
     Cooking = 'Cooking',
+    Cooked = 'Cooked',
     PickedUp = 'PickedUp',
     Delivered = 'Delivered'
 }
@@ -31,6 +32,9 @@ export class Order extends CoreEntity {
     customer?: User;
     //하나의 유저는 여러 주문을 갖는다
 
+    @RelationId((order: Order) => order.customer)
+    customerId: number;
+
     @Field(type => User, {nullable: true}) //주문을 했을때 바로 배달원이 매칭되지 않기 때문
     @ManyToOne(
         type => User,
@@ -38,6 +42,11 @@ export class Order extends CoreEntity {
         {onDelete:"SET NULL", nullable: true}
         )
     driver?: User;
+
+    @RelationId((order: Order) => order.driver)
+    driverId: number;
+
+    //restaurantId는 필요 없지만 ownerId는 필요하기에 여기에 안만든 것.
 
     @Field(type => Restaurant,{nullable: true})
     @ManyToOne(
