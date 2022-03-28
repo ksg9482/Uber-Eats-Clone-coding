@@ -10,9 +10,9 @@ export class JwtMiddleware implements NestMiddleware {
         private readonly userService: UsersService//UsersService는 어디서 오는가? user module이 UserService를 가지고 있다. 드러나 export되고 있지 않다. 즉, exports에 추가해 주어야 한다.
     ) { }
     async use(req: Request, res: Response, next: NextFunction) {
-        if ('x-jwt' in req.headers) {
+        if ('X-JWT' in req.headers) {
            // console.log(req.headers["x-jwt"]);
-            const token = req.headers["x-jwt"];
+            const token = req.headers["X-JWT"];
             try {
                 const decoded = this.jwtService.verify(token.toString())//toString()을 쓰는 이유-typescript는 어떤 헤더든 array가 될 수 있다고 본다
                 if (typeof decoded === 'object' && decoded.hasOwnProperty('id')) {

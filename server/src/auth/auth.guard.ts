@@ -1,18 +1,23 @@
-import { CanActivate, ExecutionContext } from "@nestjs/common";
+import { CanActivate, ExecutionContext, Injectable } from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
 import { GqlExecutionContext } from "@nestjs/graphql";
 import { Observable } from "rxjs";
+import { JwtService } from "src/jwt/jwt.service";
 import { User } from "src/users/entities/user.entity";
+import { UsersService } from "src/users/users.service";
 import { AllowedRoles } from "./role.decorator";
 
-
+@Injectable()
 export class AuthGuard implements CanActivate {
-    constructor(private readonly reflector: Reflector) {}
+    constructor(
+        private readonly reflector: Reflector,
+        ) {}
     canActivate(context: ExecutionContext): boolean | Promise<boolean> | Observable<boolean> {
         const roles = this.reflector.get<AllowedRoles>(
             'roles', 
             context.getHandler()
             );
+            
             if(!roles) { //resolver가 public이라 role이 안생김
                 return true
             }

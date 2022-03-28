@@ -43,7 +43,25 @@ import { OrderItem } from './orders/entities/order-item.entity';
     GraphQLModule.forRoot<ApolloDriverConfig>({//nestjs에 graphql을 적용함
       driver: ApolloDriver,
       autoSchemaFile: true,
-      context: ({ req }) => ({ user: req['user'] })//request user를 graphql resolver의 context를 통해 공유하는 것
+      installSubscriptionHandlers: true,
+      subscriptions:{
+        'graphql-ws': true,
+        'subscriptions-transport-ws': {
+          onConnect: (connectionParams: any) => ({
+            token: connectionParams['X-JWT'],
+            })
+        }
+      },
+      context: ({ req, connection }) => {
+        if(req){
+          return { user: req['user'] }
+        } else {
+          console.log(connection)
+        }
+      }
+        
+        //request user를 graphql resolver의 context를 통해 공유하는 것
+      //connection 웹소켓에는 다른 프로토콜이 필요하다. 웹소켓엔 request가 없고 이게있다.
     }),
     TypeOrmModule.forRoot({
       type: "postgres",
@@ -66,7 +84,6 @@ import { OrderItem } from './orders/entities/order-item.entity';
       ]
 
     }),
-    //RestaurantsModule,
     JwtModule.forRoot({
       privateKey: process.env.PRIVATE_KEY
     }),
