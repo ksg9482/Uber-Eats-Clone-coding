@@ -20,6 +20,7 @@ import { Dish } from './restaurants/entities/dish.entity';
 import { OrdersModule } from './orders/orders.module';
 import { Order } from './orders/entities/order.entity';
 import { OrderItem } from './orders/entities/order-item.entity';
+import { Context } from 'apollo-server-core';
 
 @Module({
   imports: [
@@ -40,25 +41,27 @@ import { OrderItem } from './orders/entities/order-item.entity';
         MAILGUN_FROMEMAIL: Joi.string().required()
       })
     }),
-    GraphQLModule.forRoot<ApolloDriverConfig>({//nestjs에 graphql을 적용함
-      driver: ApolloDriver,
+    GraphQLModule.forRoot/*<ApolloDriverConfig>*/({//nestjs에 graphql을 적용함
+      //driver: ApolloDriver,
       autoSchemaFile: true,
       installSubscriptionHandlers: true,
-      subscriptions:{
-        'graphql-ws': true,
+      subscriptions: {
         'subscriptions-transport-ws': {
-          onConnect: (connectionParams: any) => ({
-            token: connectionParams['X-JWT'],
-            })
+        onConnect: (connectionParams) => {
+          console.log(connectionParams)
+        const TOKEN_KEY = "x-jwt";
+        const token = connectionParams[TOKEN_KEY]
+        return {token}
         }
-      },
-      context: ({ req, connection }) => {
-        if(req){
-          return { user: req['user'] }
-        } else {
-          console.log(connection)
         }
-      }
+        // 'graphql-ws': {
+        //   onConnect: (context: Context<any>) => {
+        //     const { connectionParams, extra } = context;
+        //     console.log(connectionParams, extra)
+        //   }
+        // }
+        },
+      context: ({ req }) => ({ token: req.headers['x-jwt']  })
         
         //request user를 graphql resolver의 context를 통해 공유하는 것
       //connection 웹소켓에는 다른 프로토콜이 필요하다. 웹소켓엔 request가 없고 이게있다.
@@ -95,23 +98,26 @@ import { OrderItem } from './orders/entities/order-item.entity';
     UsersModule,
     RestaurantsModule,
     AuthModule,
-    OrdersModule
-    //CommonModule,
+    OrdersModule,
+    CommonModule,
   ],
   controllers: [],
   providers: [],
 })
-export class AppModule implements NestModule {
-  configure(consumer: MiddlewareConsumer) {
-    consumer
-      .apply(JwtMiddleware)
-      .forRoutes({
-        path: "/graphql", //다적용이면 *, graphql에 적용이면 "/graphql"로 한다. 
-        method: RequestMethod.POST
-      })
-    //exclude를 쓰면 특정 route를 제외할 수 있다
-  }
-}
+export class AppModule {}
+//http일 때와 ws일 때 전부 호출되는 건? -> guard가 호출된다
+
+// implements NestModule { //이건 http에서만 쓸 수 있다
+//   configure(consumer: MiddlewareConsumer) {
+//     consumer
+//       .apply(JwtMiddleware)
+//       .forRoutes({
+//         path: "/graphql", //다적용이면 *, graphql에 적용이면 "/graphql"로 한다. 
+//         method: RequestMethod.POST
+//       })
+//     //exclude를 쓰면 특정 route를 제외할 수 있다
+//   }
+// }
 
 /*wsl2 를 사용하시며 윈도우에서 postgreSQL을 설치하시는 분들이 하셔야 할 것:
 

@@ -26,7 +26,7 @@ describe('UserModule (e2e)', () => {
   const publicTest = (query: string) => baseTest().send({ query });
   const privateTest = (query: string) =>
     baseTest()
-      .set('X-JWT', jwtToken)
+      .set('x-jwt', jwtToken)
       .send({ query });
 
   beforeAll(async () => {
