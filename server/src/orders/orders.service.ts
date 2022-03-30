@@ -1,5 +1,7 @@
-import { Injectable } from "@nestjs/common";
+import { Inject, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
+import { PubSub } from "graphql-subscriptions";
+import { NEW_COOKED_ORDER, NEW_ORDER_UPDATE, NEW_PENDING_ORDER, PUB_SUB } from "src/common/common.constants";
 import { Dish, DishOption } from "src/restaurants/entities/dish.entity";
 import { Restaurant } from "src/restaurants/entities/restaurant.entity";
 import { User, UserRole } from "src/users/entities/user.entity";
@@ -8,6 +10,7 @@ import { CreateOrderInput, CreateOrderOutput } from "./dtos/create-order.dto";
 import { EditOrderInput, EditOrderOutput } from "./dtos/edit-order.dto";
 import { GetOrderInput, GetOrderOutput } from "./dtos/get-order.dto";
 import { GetOrdersInput, GetOrdersOutput } from "./dtos/get-orders.dto";
+import { TakeOrderInput, TakeOrderOutput } from "./dtos/take-order.dto";
 import { OrderItem } from "./entities/order-item.entity";
 import { Order, OrderStatus } from "./entities/order.entity";
 
@@ -21,7 +24,9 @@ export class OrdersService {
         @InjectRepository(Restaurant)
         private readonly restaurants: Repository<Restaurant>,
         @InjectRepository(Dish)
-        private readonly dishes: Repository<Dish>
+        private readonly dishes: Repository<Dish>,
+        @Inject(PUB_SUB)
+        private readonly pubSub: PubSub
     ) { }
 
     async createOrder(
@@ -100,7 +105,7 @@ export class OrdersService {
             };
 
 
-            await this.orders.save(
+            const order = await this.orders.save(
                 this.orders.create({
                     customer,
                     restaurant,
@@ -109,6 +114,14 @@ export class OrdersService {
                     //주의: items는 many to many 관계!
                 })
             );
+
+            await this.pubSub.publish(NEW_PENDING_ORDER, {
+                pendingOrders: { order, ownerId: restaurant.ownerId }
+            })
+            //payload는 resolver의 이름
+            //이 order를 subscription으로 곧장 보내도 문제는 없었다
+            //그러나 밑의 editOrder 쪽에선 아니다.
+
             return {
                 ok: true
             }
@@ -171,24 +184,24 @@ export class OrdersService {
         }
     };
 
-    canSeeOrder(user: User, order: Order):Boolean {
+    canSeeOrder(user: User, order: Order): Boolean {
         let canSee = true;
-            if(user.role === UserRole.Client && order.customerId !== user.id){
-                canSee = false
-            }
-            if(user.role === UserRole.Delivery && order.driverId !== user.id){
-                canSee = false
-            }
-            if (
-                user.role === UserRole.Owner &&
-                order.restaurant.ownerId !== user.id
-            ) {
-                //문제는 3개의 relation을 load 해야 한다는 것
-                //restaurant relation은 반드시 load해야 한다. order의 restaurant owner를 알아야 함
-                //customer, driver는 load하지 않아도 된다. order entitiy에서 relation 컬럼을 만들면 된다
-                canSee = false
-            }
-            return canSee
+        if (user.role === UserRole.Client && order.customerId !== user.id) {
+            canSee = false
+        }
+        if (user.role === UserRole.Delivery && order.driverId !== user.id) {
+            canSee = false
+        }
+        if (
+            user.role === UserRole.Owner &&
+            order.restaurant.ownerId !== user.id
+        ) {
+            //문제는 3개의 relation을 load 해야 한다는 것
+            //restaurant relation은 반드시 load해야 한다. order의 restaurant owner를 알아야 함
+            //customer, driver는 load하지 않아도 된다. order entitiy에서 relation 컬럼을 만들면 된다
+            canSee = false
+        }
+        return canSee
     }
 
     async getOrder(
@@ -204,15 +217,15 @@ export class OrdersService {
                     error: 'order not found'
                 };
             }
-            
-            if(!this.canSeeOrder(user, order)){
+
+            if (!this.canSeeOrder(user, order)) {
                 return {
                     ok: false,
                     error: "you can't see that"
                 };
             }
             return {
-                ok:true,
+                ok: true,
                 order
             }
         } catch (error) {
@@ -221,23 +234,28 @@ export class OrdersService {
                 error: 'could not load order'
             }
         }
-        
+
     };
 
     async editOrder(
-        user: User, 
-        {id: orderId, status}: EditOrderInput
-        ): Promise<EditOrderOutput> {
-            try {
-                const order = await this.orders.findOne(orderId);
+        user: User,
+        { id: orderId, status }: EditOrderInput
+    ): Promise<EditOrderOutput> {
+        try {
+            const order = await this.orders.findOne(orderId);
+            //eager relation은 db에서 entity를 load 할 때마다 자동으로 load되는 relation을 말한다
+            //order entity에서 eager 활성화
+            //단 eager relation을 쓸 때는 너무 많은 것을 load하면 안된다
+            //graphql의 'n+1 problem'을 주의 할 것(연결해서 계속 부르기)
 
-            if(!order) {
+
+            if (!order) {
                 return {
                     ok: false,
                     error: 'order not found'
                 }
             }
-            if(!this.canSeeOrder(user, order)){
+            if (!this.canSeeOrder(user, order)) {
                 return {
                     ok: false,
                     error: "can't see this"
@@ -246,42 +264,98 @@ export class OrdersService {
 
 
             let canEdit = true
-            if(user.role === UserRole.Client){
+            if (user.role === UserRole.Client) {
                 canEdit = false
             }
 
-            if(user.role === UserRole.Owner) {
-                if(status !== OrderStatus.Cooking && status !== OrderStatus.Cooked) {
+            if (user.role === UserRole.Owner) {
+                if (status !== OrderStatus.Cooking && status !== OrderStatus.Cooked) {
                     canEdit = false
                 }
             }
-            if(user.role === UserRole.Delivery) {
-                if(status !== OrderStatus.PickedUp && status !== OrderStatus.Delivered) {
+            if (user.role === UserRole.Delivery) {
+                if (status !== OrderStatus.PickedUp && status !== OrderStatus.Delivered) {
                     canEdit = false
                 }
             }
 
-            if(!canEdit) {
+            if (!canEdit) {
                 return {
-                    ok:false,
+                    ok: false,
                     error: "you can't do that"
                 }
             }
 
-            await this.orders.save([
+            await this.orders.save(
                 {
                     id: orderId,
                     status
                 }
-            ])
-        return {
-            ok:true
-        };
+            )
+            const newOrder = { ...order, status }
+            if (user.role === UserRole.Owner) {
+                if (status === OrderStatus.Cooked) {
+                    await this.pubSub.publish(NEW_COOKED_ORDER, {
+                        cookedOrder: newOrder
+                    })// status가 cooking이기 때문에 cooked로 바꾸기 위함
+                } //이건 driver에게만 감.
+            }
+            await this.pubSub.publish(NEW_ORDER_UPDATE, { //이건 모두에게 감
+                orderUpdates: newOrder
+            })
+            //이미 존재하는 entity를 save하고 create하는 것의 차이
+            //entity를 create할 때는 save method가 create된 entity를 return한다
+            //entity를 save할 때는 entity 전체를 return하지 않는다
+            //save method가 order 전체를 return하지 않기 때문에 원하는 정보를 못 받을 수 있다
+
+
+            return {
+                ok: true
+            };
+        } catch (error) {
+            return {
+                ok: false,
+                error: 'could not edit order'
+            }
+        }
+    }
+
+    async takeOrder(
+        driver: User,
+        {id: orderId}: TakeOrderInput
+        ):Promise<TakeOrderOutput> {
+            try {
+                const order = await this.orders.findOne(orderId);
+
+            if(!order) {
+                return {
+                    ok: false,
+                    error: 'order not found'
+                };
+            };
+            if(order.driver) {
+                return {
+                    ok: false,
+                    error: 'this order already has a driver'
+                };
+            };
+            
+            await this.orders.save({
+                id: orderId,
+                driver
+            });
+            await this.pubSub.publish(NEW_ORDER_UPDATE, {
+                orderUpdates: { ...order, driver}
+            });
+
+            return { ok: true}
+
             } catch (error) {
                 return {
                     ok: false,
-                    error: 'could not edit order'
+                    error: 'could not update order'
                 }
             }
     }
+
 }

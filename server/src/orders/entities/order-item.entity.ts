@@ -29,7 +29,7 @@ export class OrderItemOption {
 @ObjectType() //graphql을 위한 것
 @Entity() //typeorm을 위한 것
 export class OrderItem extends CoreEntity { 
-
+    @Field(type => Dish)
     @ManyToOne(type => Dish, {
         nullable:true, 
         onDelete:'CASCADE'

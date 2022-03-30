@@ -27,7 +27,7 @@ export class Order extends CoreEntity {
     @ManyToOne(
         type => User,
         user => user.orders,
-        {onDelete:"SET NULL", nullable: true}
+        {onDelete:"SET NULL", nullable: true, eager: true}
         )
     customer?: User;
     //하나의 유저는 여러 주문을 갖는다
@@ -39,7 +39,7 @@ export class Order extends CoreEntity {
     @ManyToOne(
         type => User,
         user => user.rides,
-        {onDelete:"SET NULL", nullable: true}
+        {onDelete:"SET NULL", nullable: true, eager: true}
         )
     driver?: User;
 
@@ -53,12 +53,12 @@ export class Order extends CoreEntity {
         type => Restaurant,
         //이부분은 반대관계에서 어떻게 되는지 알려주는 역할
         restaurant => restaurant.orders,
-        {onDelete:"SET NULL", nullable: true}
+        {onDelete:"SET NULL", nullable: true, eager: true}
         )
     restaurant?: Restaurant;
 
     @Field(type => [OrderItem])
-    @ManyToMany(type => OrderItem)
+    @ManyToMany(type => OrderItem, {eager: true})
     @JoinTable()
     //JoinTable은 소유(owning)하고 있는 쪽의 relation에 추가한다
     //dish에서 이 dish가 어떤 order에 포함되는지 알수 없음
