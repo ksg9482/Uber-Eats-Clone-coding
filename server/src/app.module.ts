@@ -21,6 +21,7 @@ import { OrdersModule } from './orders/orders.module';
 import { Order } from './orders/entities/order.entity';
 import { OrderItem } from './orders/entities/order-item.entity';
 import { Context } from 'apollo-server-core';
+import { PaymentsModule } from './payments/payments.module';
 
 @Module({
   imports: [
@@ -100,6 +101,7 @@ import { Context } from 'apollo-server-core';
     AuthModule,
     OrdersModule,
     CommonModule,
+    PaymentsModule,
   ],
   controllers: [],
   providers: [],
