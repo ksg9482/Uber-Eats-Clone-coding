@@ -22,6 +22,7 @@ import { Order } from './orders/entities/order.entity';
 import { OrderItem } from './orders/entities/order-item.entity';
 import { Context } from 'apollo-server-core';
 import { PaymentsModule } from './payments/payments.module';
+import { Payment } from './payments/entites/payment.entity';
 
 @Module({
   imports: [
@@ -84,7 +85,8 @@ import { PaymentsModule } from './payments/payments.module';
         Category, 
         Dish, 
         Order, 
-        OrderItem
+        OrderItem,
+        Payment
       ]
 
     }),

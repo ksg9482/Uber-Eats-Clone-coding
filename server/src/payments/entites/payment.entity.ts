@@ -15,16 +15,21 @@ export class Payment extends CoreEntity {
   @Field(type => User)
   @ManyToOne(
     type => User,
-    //user => user.payments,
+    user => user.payments,
   )
   user: User;
 
   @RelationId((payment: Payment) => payment.user)
   userId: number;
 
+//user가 소유한 여러 음식점 중 홍보하고 싶은 곳을 선택해야 하기 때문
   @Field(type => Restaurant)
   @ManyToOne(type => Restaurant)
   restaurant: Restaurant;
+  //반대편에 many to one이 없어도 만들 수 있다.
+  //restaurant가 가지고 있는 poayment에 관심 없기에 안만듦
+    //one to many는 many to one 없이 존재할 수 없다.
+    //many to one 관계에만 집중하고 싶다면 관련 entity에 one to many없이 정의 할 수 있다
 
   @RelationId((payment: Payment) => payment.restaurant)
   restaurantId: number;
