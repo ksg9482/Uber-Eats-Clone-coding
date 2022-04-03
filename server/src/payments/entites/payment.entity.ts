@@ -32,5 +32,6 @@ export class Payment extends CoreEntity {
     //many to one 관계에만 집중하고 싶다면 관련 entity에 one to many없이 정의 할 수 있다
 
   @RelationId((payment: Payment) => payment.restaurant)
+  @Field(type => Number)
   restaurantId: number;
 }
