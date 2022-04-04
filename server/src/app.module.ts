@@ -23,6 +23,7 @@ import { OrderItem } from './orders/entities/order-item.entity';
 import { Context } from 'apollo-server-core';
 import { PaymentsModule } from './payments/payments.module';
 import { Payment } from './payments/entites/payment.entity';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
@@ -90,6 +91,7 @@ import { Payment } from './payments/entites/payment.entity';
       ]
 
     }),
+    ScheduleModule.forRoot(),
     JwtModule.forRoot({
       privateKey: process.env.PRIVATE_KEY
     }),

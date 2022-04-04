@@ -174,7 +174,10 @@ export class RestaurantsService {
                     category //위에서 선언한 category
                 },
                 take: 25,
-                skip: (page - 1) * 25
+                skip: (page - 1) * 25,
+                order: {
+                    isPromoted: 'DESC'
+                }
             });
             category.restaurants = restaurants;
 
@@ -198,7 +201,10 @@ export class RestaurantsService {
         try {
             const [restaurants, totalResults] = await this.restaurants.findAndCount({
                 take: 25,
-                skip: (page - 1) * 25
+                skip: (page - 1) * 25,
+                order: {
+                    isPromoted: 'DESC'
+                }
             });
 
             return {
@@ -336,7 +342,6 @@ export class RestaurantsService {
             };
     };
 
-
     async deleteDish(
         owner:User,
     {dishId}: DeleteDishInput
@@ -372,5 +377,6 @@ export class RestaurantsService {
                 }
             };
 
-    }
+    };
+
 }

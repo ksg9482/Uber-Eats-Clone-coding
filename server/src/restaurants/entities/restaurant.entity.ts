@@ -62,4 +62,12 @@ export class Restaurant extends CoreEntity {
     /*아이디를 받아와야 하는데 loadRelationIds로 받는건 number로 온다
     그런데 owner는 타입이 User기 때문에 맞지 않는다. owner 타입을 User | number로 바꾸는 건 이상하다.
     따라서 RelationId 데코레이터를 사용한다.*/
+
+    @Field(type => Boolean)
+    @Column({default:false})
+    isPromoted: boolean;
+
+    @Field(type => Date, {nullable:true})
+    @Column({nullable:true})
+    promotedUntil?: Date;
 }
