@@ -16,7 +16,7 @@ export const LoggedOutRouter = () => {
         <Router>
             <Routes>
                 <Route 
-                path="/create-accout" 
+                path="/create-account" 
                 element={<CreateAccount />} 
                 />
                 <Route 

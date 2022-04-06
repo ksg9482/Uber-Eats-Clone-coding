@@ -10,7 +10,7 @@ import {
  export const isLoggedInVar = makeVar(false)
 //property를 정의한다
 export const client = new ApolloClient({
-    uri: 'http:localhost:4000/graphql',
+    uri: 'http://localhost:4000/graphql',
     cache: new InMemoryCache({//local state를 cache에 저장함
       typePolicies: {
         Query: {
