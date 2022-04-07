@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form";
 import { isLoggedInVar } from "../apollo";
 import { CreateAccount } from "../pages/create-account";
 import { Login } from "../pages/login";
+import { NotFound } from "../pages/404";
 
 // interface IForm {
 //     email: string;
@@ -16,13 +17,20 @@ export const LoggedOutRouter = () => {
         <Router>
             <Routes>
                 <Route 
+                key='createAccount'
                 path="/create-account" 
                 element={<CreateAccount />} 
                 />
                 <Route 
+                key='login'
                 path="/" 
                 element={<Login />} 
                 /> 
+                <Route 
+                key='notFound'
+                path="*"
+                element={<NotFound />}
+                />
             </Routes>
         </Router>
     )

@@ -9,14 +9,14 @@ import { CreateAccountInput } from "./globalTypes";
 // GraphQL mutation operation: createAccountMutaion
 // ====================================================
 
-export interface createAccountMutaion_login {
-  __typename: "LoginOutput";
+export interface createAccountMutaion_createAccount {
+  __typename: "CreateAccountOutput";
   ok: boolean;
   error: string | null;
 }
 
 export interface createAccountMutaion {
-  login: createAccountMutaion_login;
+  createAccount: createAccountMutaion_createAccount;
 }
 
 export interface createAccountMutaionVariables {

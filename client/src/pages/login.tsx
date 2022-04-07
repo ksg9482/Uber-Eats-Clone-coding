@@ -1,10 +1,12 @@
 import { ApolloError, gql, useMutation } from "@apollo/client";
 import React from "react";
-import { Helmet } from "react-helmet";
+import { Helmet } from "react-helmet-async";
 import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
+import { authTokenVar, isLoggedInVar } from "../apollo";
 import { Button } from "../components/button";
 import { FormError } from "../components/form-error";
+import { LOCALSTORAGE_TOKEN } from "../constants";
 import yuberLogo from "../images/logo.svg"
 import { logInMutaion, logInMutaionVariables } from "../__generated__/logInMutaion";
 
@@ -48,13 +50,11 @@ export const Login = () => {
             error,
             token
         }} = data;
-        if(ok) {
-            console.log(token)
-        } else {
-            if(error) {
-
-            }
-        }
+        if(ok && token) {
+            localStorage.setItem(LOCALSTORAGE_TOKEN, token)
+            authTokenVar(token);
+            isLoggedInVar(true);
+        } 
     };
     const onError = (error: ApolloError) => {
         //주의: output에서의 error false는 graphql에겐 onCompleted다. graphql의 error가 아님
@@ -107,7 +107,7 @@ export const Login = () => {
                 </title>
             </Helmet>
             <div className="w-full max-w-screen-sm flex flex-col px-5 items-center">
-                <img src={yuberLogo} className="w-52 mb-10" />
+                <img src={yuberLogo} className="w-52 mb-10" alt="Yuber Eats"/>
                 <h4 className="w-full font-medium text-left text-3xl mb-5">Wellcome back</h4>
                 <form 
                 onSubmit={handleSubmit(onSubmit)}
@@ -115,7 +115,8 @@ export const Login = () => {
                 >
                     <input 
                         {...register('email', {
-                            required: 'Email is required'
+                            required: 'Email is required',
+                            pattern:/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
                         })}
                         required
                         placeholder="Email"
