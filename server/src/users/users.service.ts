@@ -33,7 +33,6 @@ export class UsersService {
             const user = await this.users.save(this.users.create({ email, password, role }))
             
             const verification = await this.verifications.save(this.verifications.create({
-                //code: "test", 
                 user
             }))
             this.mailService.sendVerificationEmail(user.email, verification.code)

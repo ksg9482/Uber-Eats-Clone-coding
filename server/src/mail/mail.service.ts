@@ -22,7 +22,8 @@ export class MailService {
         const form = new FormData();
         form.append(
             'from',
-            `From Yuber Eats <mailgun@${this.options.domain}>`);
+            //`From Yuber Eats <Yuber@${this.options.domain}>`);
+            `From Yuber Eats <Yuber@mailgun-test.com>`);
         form.append('to', `${process.env.MAILGUN_FROMEMAIL}`);
         form.append('subject', subject);
         form.append('template', template);
@@ -48,8 +49,8 @@ export class MailService {
 
     sendVerificationEmail(email: string, code: string){
         this.sendEmail('Verify Your Email', 'youber-eats',[
-            { key: 'code', value: code },
-            { key: 'username', value: email}
+            { key: 'username', value: email},
+            { key: 'code', value: code }
         ]);
     }
 
