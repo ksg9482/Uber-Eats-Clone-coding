@@ -13,6 +13,9 @@ query meQuery {
   }
 `;
 
+
+//meQuery에서 id도 가져온 이유? Apollo는 type에 id속성이 있으면 model의 id로 쓰기 때문
+
 export const useMe = () => {
     return useQuery<meQuery>(ME_QUERY);
 }
