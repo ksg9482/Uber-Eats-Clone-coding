@@ -181,11 +181,13 @@ export class RestaurantsService {
             });
             category.restaurants = restaurants;
 
-            const totalResult = await this.countRestaurants(category)
+            const totalResults = await this.countRestaurants(category)
             return {
                 ok: true,
+                restaurants,
                 category,
-                totalPages: Math.ceil(totalResult / 25)
+                totalPages: Math.ceil(totalResults / 25),
+                totalResults
             };
         } catch (error) {
             return {
@@ -200,8 +202,8 @@ export class RestaurantsService {
     ): Promise<RestaurantsOutput> {
         try {
             const [restaurants, totalResults] = await this.restaurants.findAndCount({
-                take: 25,
-                skip: (page - 1) * 25,
+                take: 3,
+                skip: (page - 1) * 3,
                 order: {
                     isPromoted: 'DESC'
                 }
@@ -210,7 +212,7 @@ export class RestaurantsService {
             return {
                 ok: true,
                 results: restaurants,
-                totalPages: Math.ceil(totalResults / 25),
+                totalPages: Math.ceil(totalResults / 3),
                 totalResults
             }
         } catch (error) {

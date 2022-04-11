@@ -32,7 +32,7 @@ export class Restaurant extends CoreEntity {
     @ManyToOne( //레스토랑은 하나의 카테고리를 갖는다
     type => Category,
     category => category.restaurants,
-    {nullable: true, onDelete:'SET NULL'} //카테코리를 지울때 레스토랑이 지워지지 않기 위해
+    {nullable: true, onDelete:'SET NULL', eager:true} //카테코리를 지울때 레스토랑이 지워지지 않기 위해
     )
     category: Category
 
@@ -43,6 +43,12 @@ export class Restaurant extends CoreEntity {
     {onDelete:"CASCADE"}
     )
     owner: User
+
+    @RelationId((restaurant: Restaurant) => restaurant.owner)
+    ownerId: number
+    /*아이디를 받아와야 하는데 loadRelationIds로 받는건 number로 온다
+    그런데 owner는 타입이 User기 때문에 맞지 않는다. owner 타입을 User | number로 바꾸는 건 이상하다.
+    따라서 RelationId 데코레이터를 사용한다.*/
 
     @Field(type => [Order])
     @OneToMany( //한명의 유저는 여러 주문을 가질 수 있다
@@ -56,12 +62,6 @@ export class Restaurant extends CoreEntity {
         type => Dish, 
         dish => dish.restaurant)
     menu: Dish[]
-
-    @RelationId((restaurant: Restaurant) => restaurant.owner)
-    ownerId: number
-    /*아이디를 받아와야 하는데 loadRelationIds로 받는건 number로 온다
-    그런데 owner는 타입이 User기 때문에 맞지 않는다. owner 타입을 User | number로 바꾸는 건 이상하다.
-    따라서 RelationId 데코레이터를 사용한다.*/
 
     @Field(type => Boolean)
     @Column({default:false})
