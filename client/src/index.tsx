@@ -7,7 +7,7 @@ import {
   useQuery,
   gql
 } from "@apollo/client";
-import App from './App';
+import {App} from './components/app';
 import reportWebVitals from './reportWebVitals';
 import "./styles/styles.css"
 import { client } from './apollo';
