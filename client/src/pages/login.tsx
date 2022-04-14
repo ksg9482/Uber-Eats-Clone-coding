@@ -10,8 +10,7 @@ import { LOCALSTORAGE_TOKEN } from "../constants";
 import yuberLogo from "../images/logo.svg"
 import { logInMutaion, logInMutaionVariables } from "../__generated__/logInMutaion";
 
-
-const LOGIN_MUTATION = gql`
+export const LOGIN_MUTATION = gql`
     mutation logInMutaion($loginInput: LoginInput!) {
         login(input: $loginInput) {
         ok
@@ -27,64 +26,67 @@ const LOGIN_MUTATION = gql`
 
 
 interface ILoginForm {
-    email:string;
+    email: string;
     password: string;
 }
 
 export const Login = () => {
-    const { 
+    const {
         register,
         getValues,
         watch,
         handleSubmit,
         formState: { errors, isValid }
     } = useForm<ILoginForm>({
-        mode:'onChange' 
+        mode: 'onChange'
         //mode에 따라서 valid체크를 한다. onChange는 변화가 있을 때마다 체크. 
         //onBlur도 사용할만 하다. 포커스 상태에서 벗어나면 체크
         //onSubmit은 submit이벤트가 일어나고 valid체크를 하니 늦다
     });
     const onCompleted = (data: logInMutaion) => {
-        const {login: {
+        console.log(data)
+        const { login: {
             ok,
             error,
             token
-        }} = data;
-        if(ok && token) {
+        } } = data;
+        
+        if (ok && token) {
             localStorage.setItem(LOCALSTORAGE_TOKEN, token)
             authTokenVar(token);
             isLoggedInVar(true);
-        } 
+        }
     };
     const onError = (error: ApolloError) => {
         //주의: output에서의 error false는 graphql에겐 onCompleted다. graphql의 error가 아님
         //graphql에서의 error는 request가 유효하지 않거나 인증이 필요하거나 url이 잘못되었을 경우
 
     };
-    const [loginMutaion, {data:loginMutationResult, loading} /*{data,loading,error}*/] = useMutation<logInMutaion, logInMutaionVariables>(
+    const [loginMutaion, { data: loginMutationResult, loading } /*{data,loading,error}*/] = useMutation<logInMutaion, logInMutaionVariables>(
         //useMutation은 array를 반환한다 
         //[0]번째는 반드시 호출해줘야 하는 mutation function이고 
         //두번째 원소는 objectr고 온갖게 들어있다
-        LOGIN_MUTATION , {
-            onCompleted,
-            //onError
-        }
-    //     ,{
-    //     variables: {
-    //         loginInput: {
-    //             email: watch('email'),
-    //             password: watch('password')
-    //             //variables는 getValue로 부터 얻는다. 
-    //             //getValue()를 호출하게 되면 그 순간의 value를 얻는다
-    //             //이러면 주는 값을 실시간으로 반영할 수 있다
-    //         }
-    //     }
-    // }
+        LOGIN_MUTATION, {
+        onCompleted,
+        //onError
+    }
+        //     ,{
+        //     variables: {
+        //         loginInput: {
+        //             email: watch('email'),
+        //             password: watch('password')
+        //             //variables는 getValue로 부터 얻는다. 
+        //             //getValue()를 호출하게 되면 그 순간의 value를 얻는다
+        //             //이러면 주는 값을 실시간으로 반영할 수 있다
+        //         }
+        //     }
+        // }
     );
     //data는 mutation으로부터 되돌아 온다. loading은 mutation이 실행되고 있다는 뜻. error는 mutation이 error를 반환한다는 뜻
     const onSubmit = () => {
-        if(!loading){
-            const {email, password} = getValues();
+        console.log('ok!!')
+        if (!loading) {
+            const { email, password } = getValues();
             loginMutaion({
                 variables: {
                     loginInput: {
@@ -107,16 +109,16 @@ export const Login = () => {
                 </title>
             </Helmet>
             <div className="w-full max-w-screen-sm flex flex-col px-5 items-center">
-                <img src={yuberLogo} className="w-52 mb-10" alt="Yuber Eats"/>
+                <img src={yuberLogo} className="w-52 mb-10" alt="Yuber Eats" />
                 <h4 className="w-full font-medium text-left text-3xl mb-5">Wellcome back</h4>
-                <form 
-                onSubmit={handleSubmit(onSubmit)}
-                className="grid gap-3 mt-5 w-full mb-5"
+                <form
+                    onSubmit={handleSubmit(onSubmit)}
+                    className="grid gap-3 mt-5 w-full mb-5"
                 >
-                    <input 
+                    <input
                         {...register('email', {
                             required: 'Email is required',
-                            pattern:/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+                            pattern: /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
                         })}
                         required
                         placeholder="Email"
@@ -124,28 +126,28 @@ export const Login = () => {
                         className="input"
                     />
                     {errors.email?.message && (
-                        <FormError errorMessage = {errors.email?.message}/>
+                        <FormError errorMessage={errors.email?.message} />
                     )}
-                    <input 
+                    {errors.email?.type === "pattern" && (
+                        <FormError errorMessage={"Please enter a valid email"} />
+                    )}
+                    <input
                         {...register('password', {
-                            required:'Password is required',
+                            required: 'Password is required',
                             minLength: 8
                         })}
                         required
-                    placeholder="Password" 
-                    type={'password'}
-                    className="input"
+                        placeholder="Password"
+                        type={'password'}
+                        className="input"
                     />
                     {errors.password?.message && (
-                        <FormError errorMessage = {errors.password?.message}/>
+                        <FormError errorMessage={errors.password?.message} />
                     )}
-                    {errors.password?.type === 'minLength' && (
-                        <FormError errorMessage = 'Password must be more than 8 chars'/>
-                    )}
-                    <Button 
-                    canClick={isValid}
-                    loading={loading}
-                    actionText={'Log in'}
+                    <Button
+                        canClick={isValid}
+                        loading={loading}
+                        actionText={'Log in'}
                     ></Button>
                     {loginMutationResult?.login.error && <FormError errorMessage={loginMutationResult.login.error} />}
                 </form>
@@ -156,6 +158,6 @@ export const Login = () => {
                     </Link>
                 </div>
             </div>
-          </div>
-            )
+        </div>
+    )
 }

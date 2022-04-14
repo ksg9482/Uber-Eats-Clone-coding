@@ -1,5 +1,5 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+import ReactDOM, {createRoot} from 'react-dom/client';
 import {
   ApolloClient,
   InMemoryCache,
@@ -12,16 +12,18 @@ import reportWebVitals from './reportWebVitals';
 import "./styles/styles.css"
 import { client } from './apollo';
 import { HelmetProvider } from 'react-helmet-async'
+const rootElement = document.getElementById("root");
+if (!rootElement) throw new Error('Failed to find the root element');
+const root = createRoot(rootElement);
 
-ReactDOM.render(
+root.render(
   <React.StrictMode>
     <ApolloProvider client={client}>
       <HelmetProvider>
         <App />
       </HelmetProvider>
     </ApolloProvider>
-  </React.StrictMode>,
-  document.getElementById('root')
+  </React.StrictMode>
 );
 
 // If you want to start measuring performance in your app, pass a function
