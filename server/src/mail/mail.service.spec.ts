@@ -51,8 +51,8 @@ describe('MailService', () => {
             expect(service.sendEmail).toHaveBeenCalledWith(
                 'Verify Your Email', 'youber-eats',
                 [
-                    { key: 'code', value: sendVerificationEmailArgs.code },
-                    { key: 'username', value: sendVerificationEmailArgs.email }
+                    { key: 'username', value: sendVerificationEmailArgs.email },
+                    { key: 'code', value: sendVerificationEmailArgs.code }
                 ]
             )
             //sendEmail이 이 이름을 가지고 불렸는지 체크한다

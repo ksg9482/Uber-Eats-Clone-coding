@@ -10,6 +10,7 @@ import { DeleteDishInput, DeleteDishOutput } from "./dtos/delete-dish.dto";
 import { DeleteRestaurantInput, DeleteRestaurantOutput } from "./dtos/delete-retaurant.dto";
 import { EditDishInput, EditDishOutput } from "./dtos/edit-dish.dto";
 import { EditRestaurantInput, EditRestaurantOutput } from "./dtos/edit-reastaurant.dto";
+import { MyRestaurantsOutput } from "./dtos/my-restaurants.dto";
 import { RestaurantInput, RestaurantOutput } from "./dtos/restaurant.dto";
 import { RestaurantsInput, RestaurantsOutput } from "./dtos/restaurants.dto";
 import { SearchRestaurantInput, SearchRestaurantOutput } from "./dtos/search-restaurant.dto";
@@ -272,6 +273,21 @@ export class RestaurantsService {
         }
     };
 
+    async myRestaurants(owner: User): Promise<MyRestaurantsOutput> {
+        try {
+            const restaurants = await this.restaurants.find({ owner });
+            return {
+                restaurants,
+                ok: true,
+            };
+        } catch {
+            return {
+                ok: false,
+                error: 'Could not find restaurants.',
+            };
+        }
+    };
+
     async createDish(
         owner: User,
         createDishInput: CreateDishInput
@@ -292,7 +308,7 @@ export class RestaurantsService {
                 };
             };
 
-            const dish = await this.dishes.save(this.dishes.create({...CreateDishInput, restaurant}))
+            const dish = await this.dishes.save(this.dishes.create({ ...CreateDishInput, restaurant }))
             return {
                 ok: true
             }
@@ -306,78 +322,78 @@ export class RestaurantsService {
     };
 
     async editDish(
-        owner:User,
+        owner: User,
         editDishInput: EditDishInput //{***,***}식으로 가져오지 않은 이유: 값이 없는 걸 가져오려 하면 undefined가 값으로 생김. 그건 원하는 바가 아니기 때문
-        ): Promise<EditDishOutput> {
-            try {
-                const dish = await this.dishes.findOne(
-                    editDishInput.dishId, 
-                    {relations: ['restaurant']}
-                    );
-                if(!dish) {
-                    return {
-                        ok: false,
-                        error: 'dish not found'
-                    };
-                };
-                if(dish.restaurant.ownerId !== owner.id) {
-                    return {
-                        ok:false,
-                        error: "you can't do that"
-                    }
-                }
-    
-                await this.dishes.save([{
-                    id:editDishInput.dishId,
-                    ...editDishInput
-                }])
-    
+    ): Promise<EditDishOutput> {
+        try {
+            const dish = await this.dishes.findOne(
+                editDishInput.dishId,
+                { relations: ['restaurant'] }
+            );
+            if (!dish) {
                 return {
-                    ok:true
+                    ok: false,
+                    error: 'dish not found'
                 };
-
-            } catch (error) {
-                return {
-                    ok:false,
-                    error: 'could not delete dish'
-                }
             };
+            if (dish.restaurant.ownerId !== owner.id) {
+                return {
+                    ok: false,
+                    error: "you can't do that"
+                }
+            }
+
+            await this.dishes.save([{
+                id: editDishInput.dishId,
+                ...editDishInput
+            }])
+
+            return {
+                ok: true
+            };
+
+        } catch (error) {
+            return {
+                ok: false,
+                error: 'could not delete dish'
+            }
+        };
     };
 
     async deleteDish(
-        owner:User,
-    {dishId}: DeleteDishInput
-        ): Promise<DeleteDishOutput> {
-            try {
-                const dish = await this.dishes.findOne(
-                    dishId, 
-                    {relations: ['restaurant']}
-                    );
-                if(!dish) {
-                    return {
-                        ok: false,
-                        error: 'dish not found'
-                    };
-                };
-                if(dish.restaurant.ownerId !== owner.id) {
-                    return {
-                        ok:false,
-                        error: "you can't do that"
-                    }
-                }
-    
-                await this.dishes.delete(dishId);
-    
+        owner: User,
+        { dishId }: DeleteDishInput
+    ): Promise<DeleteDishOutput> {
+        try {
+            const dish = await this.dishes.findOne(
+                dishId,
+                { relations: ['restaurant'] }
+            );
+            if (!dish) {
                 return {
-                    ok:true
+                    ok: false,
+                    error: 'dish not found'
                 };
-
-            } catch (error) {
-                return {
-                    ok:false,
-                    error: 'could not delete dish'
-                }
             };
+            if (dish.restaurant.ownerId !== owner.id) {
+                return {
+                    ok: false,
+                    error: "you can't do that"
+                }
+            }
+
+            await this.dishes.delete(dishId);
+
+            return {
+                ok: true
+            };
+
+        } catch (error) {
+            return {
+                ok: false,
+                error: 'could not delete dish'
+            }
+        };
 
     };
 

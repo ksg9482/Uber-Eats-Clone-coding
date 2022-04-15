@@ -27,9 +27,9 @@ export class MailService {
         form.append('to', `${process.env.MAILGUN_FROMEMAIL}`);
         form.append('subject', subject);
         form.append('template', template);
-        emailVars.forEach(eVar => form.append(`"${eVar.key}"`, `"${eVar.value}"`));
+        emailVars.forEach(eVar => form.append(`${eVar.key}`, `${eVar.value}`));
         try {
-            console.log(emailVars)
+            //console.log(emailVars)
             await got.post(
                 //post를 적으면 jest에서 post의 implementation을 mock할 수 있고, post가 테스트에 통과하지 못하도록 만들 수 있다
                 `https://api.mailgun.net/v3/${this.options.domain}/messages`, 
