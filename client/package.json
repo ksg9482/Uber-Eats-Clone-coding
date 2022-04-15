@@ -16,6 +16,7 @@
     "@types/react-dom": "^17.0.14",
     "@types/react-helmet": "^6.1.5",
     "autoprefixer": "^10.4.4",
+    "cypress": "^9.5.4",
     "graphql": "^16.3.0",
     "mock-apollo-client": "^1.2.0",
     "postcss": "^8.4.12",
@@ -37,6 +38,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "test:cov": "npm test -- --coverage --watchAll=false",
+    "cy:open": "cypress open",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {

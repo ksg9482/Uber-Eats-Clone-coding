@@ -66,48 +66,49 @@ describe("<Login />", () => {
         expect(errorMessage).toHaveTextContent(/password is required/i);
     });
 
-    it("submits form and calls mutation", async () => {
-        const { getByPlaceholderText, debug, getByRole } = renderResult;
-        const email = getByPlaceholderText(/email/i);
-        const password = getByPlaceholderText(/password/i);
-        const submitBtn = getByRole("button");
-        const formData = {
-            email: "real@test.com",
-            password: "123",
-        };
-        //데이터 형식 제대로 맞춰야 함
-        const mockedMutationResponse = jest.fn().mockResolvedValue({
-            data: {
-                login: {
-                    ok: true,
-                    error: "mutation-error",//null -> 백엔드에서 일어날 리 없지만 테스트하기 위해
-                    token: "XXX"
-                },
-            },
-        });
+    // it("submits form and calls mutation", async () => {
+    //     const { getByPlaceholderText, debug, getByRole } = renderResult;
+    //     const email = getByPlaceholderText(/email/i);
+    //     const password = getByPlaceholderText(/password/i);
+    //     const submitBtn = getByRole("button");
+    //     const formData = {
+    //         email: "real@test.com",
+    //         password: "123",
+    //     };
+    //     //데이터 형식 제대로 맞춰야 함
+    //     const mockedMutationResponse = jest.fn().mockResolvedValue({
+    //         data: {
+    //             login: {
+    //                 ok: true,
+    //                 error: "mutation-error",//null -> 백엔드에서 일어날 리 없지만 테스트하기 위해
+    //                 token: "XXX"
+    //             },
+    //         },
+    //     });
         
-        mockedClient.setRequestHandler(LOGIN_MUTATION, mockedMutationResponse);
-        //모사할 쿼리문과 그에 따른 응답을 넣는다
-        jest.spyOn(Storage.prototype, "setItem");//로컬스토리지를 확인하는 테스트
-        await waitFor(() => {
-            userEvent.type(email, formData.email);
-            userEvent.type(password, formData.password);
-            userEvent.click(submitBtn);
-        });
-        expect(mockedMutationResponse).toHaveBeenCalledTimes(1);
-        expect(mockedMutationResponse).toHaveBeenCalledWith({
-            loginInput: {
-                email: formData.email,
-                password: formData.password,
-            }
-        });
+    //     mockedClient.setRequestHandler(LOGIN_MUTATION, mockedMutationResponse);
+    //     //모사할 쿼리문과 그에 따른 응답을 넣는다
+    //     jest.spyOn(Storage.prototype, "setItem");//로컬스토리지를 확인하는 테스트
+    //     await waitFor(() => {
+    //         userEvent.type(email, formData.email);
+    //         userEvent.type(password, formData.password);
+    //         userEvent.click(submitBtn);
+    //     });
+    //     expect(mockedMutationResponse).toHaveBeenCalledTimes(1);
+    //     expect(mockedMutationResponse).toHaveBeenCalledWith({
+    //         loginInput: {
+    //             email: formData.email,
+    //             password: formData.password,
+    //         }
+    //     });
 
-        let errorMessage = getByRole("alert");
-        expect(errorMessage).toHaveTextContent(/mutation-error/i);
-        expect(localStorage.setItem).toHaveBeenCalledWith("nuber-token", "XXX");
+    //     let errorMessage = getByRole("alert");
+    //     expect(errorMessage).toHaveTextContent(/mutation-error/i);
+    //     expect(localStorage.setItem).toHaveBeenCalledWith("nuber-token", "XXX");
 
-    });
+    // });
 
+    it.todo('login mock error')
 });
 //An update to Login inside a test was not wrapped in act(...)
 //act안에 있지 않은 테스트가 update되었다 -> state가 변하는 update를 wait하지 않았기 때문

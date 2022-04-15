@@ -10,7 +10,7 @@ import { createAccountMutaion, createAccountMutaionVariables } from "../__genera
 import { UserRole } from "../__generated__/globalTypes";
 
 
-const CREATEACCOUNT_MUTATION = gql`
+export const CREATEACCOUNT_MUTATION = gql`
     mutation createAccountMutaion($CreateAccountInput: CreateAccountInput!) {
         createAccount(input: $CreateAccountInput) {
         ok
@@ -113,9 +113,6 @@ export const CreateAccount = () => {
                     />
                     {errors.password?.message && (
                         <FormError errorMessage = {errors.password?.message}/>
-                    )}
-                    {errors.password?.type === 'minLength' && (
-                        <FormError errorMessage = 'Password must be more than 8 chars'/>
                     )}
                     <select 
                     {...register('role', {required: true})}
