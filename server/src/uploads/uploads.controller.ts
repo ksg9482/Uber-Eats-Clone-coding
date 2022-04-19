@@ -15,16 +15,19 @@ export class UploadsController {
             }
         });
         try {
-            const upload = await new AWS.S3()
+            const objectName = `${Date.now() + file.originalname}`
+            await new AWS.S3()
             .putObject({
                 Bucket: BUCKET_NAME,
-                Key: `${Date.now() + file.originalname}`,
-                Body: file.buffer
+                Key: objectName,
+                Body: file.buffer,
+                ACL: 'public-read'
             })
-            .promise()
-            console.log(upload)
+            .promise();
+            const url = `https://${BUCKET_NAME}.s3.amazonaws.com/${objectName}`;
+            return {url}
         } catch (error) {
-            console.log(error)
+            return null
         }
     }
 }

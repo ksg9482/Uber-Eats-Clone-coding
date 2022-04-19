@@ -16,7 +16,8 @@ export class CreateRestaurantInput extends PickType(
 
 @ObjectType()
 export class CreateRestaurantOutput extends CoreOutput {
-
+    @Field(type => Number)
+    restaurantId?: number //fake하기 위해 id가 필요
 }
 
     //restaurent에서 id를 제외한 모든 것을 받는다. *OmitType은 InputType에서만 작동한다

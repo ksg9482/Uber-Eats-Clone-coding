@@ -10,6 +10,7 @@ import { DeleteDishInput, DeleteDishOutput } from "./dtos/delete-dish.dto";
 import { DeleteRestaurantInput, DeleteRestaurantOutput } from "./dtos/delete-retaurant.dto";
 import { EditDishInput, EditDishOutput } from "./dtos/edit-dish.dto";
 import { EditRestaurantInput, EditRestaurantOutput } from "./dtos/edit-reastaurant.dto";
+import { MyRestaurantInput, MyRestaurantOutput } from "./dtos/my-restaurant.dto";
 import { MyRestaurantsOutput } from "./dtos/my-restaurants.dto";
 import { RestaurantInput, RestaurantOutput } from "./dtos/restaurant.dto";
 import { RestaurantsInput, RestaurantsOutput } from "./dtos/restaurants.dto";
@@ -42,7 +43,8 @@ export class RestaurantsService {
             newRestaurant.category = category;
             await this.restaurants.save(newRestaurant)//newRestaurant가 restaurants를 리턴하고 save는 promise를 리턴한다. 즉 Promise<Restaurant>
             return {
-                ok: true
+                ok: true,
+                restaurantId: newRestaurant.id
             }
             //save를 쓰면 데이터베이스에 간섭한다
         } catch (error) {
@@ -287,6 +289,27 @@ export class RestaurantsService {
             };
         }
     };
+
+    async myRestaurant(
+        owner: User,
+        { id }: MyRestaurantInput,
+      ): Promise<MyRestaurantOutput> {
+        try {
+          const restaurant = await this.restaurants.findOne(
+            { owner, id },
+            { relations: ['menu', 'orders'] },
+          );
+          return {
+            restaurant,
+            ok: true,
+          };
+        } catch {
+          return {
+            ok: false,
+            error: 'Could not find restaurant',
+          };
+        }
+      }
 
     async createDish(
         owner: User,
