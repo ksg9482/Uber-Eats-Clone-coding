@@ -24,4 +24,22 @@ export const CATEGORY_FRAGMENT = gql`
   }
 `;
 
+export const DISH_FRAGMENT = gql`
+  fragment DishParts on Dish {
+    id
+    name
+    price
+    photo
+    description
+    options {
+      name
+      extra
+      choices {
+        name
+        extra
+      }
+    }
+  }
+`;
+
 //fragment만든 이유? 여러 쿼리문에 중복되는게 있다 -> 따로 빼서 불러오게 만든다
