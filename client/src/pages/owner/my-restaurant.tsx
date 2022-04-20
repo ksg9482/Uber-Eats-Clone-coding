@@ -1,10 +1,19 @@
 import { gql, useQuery } from "@apollo/client";
 import React from "react";
 import { Helmet } from "react-helmet-async";
-import { VictoryChart, VictoryAxis, VictoryBar } from "victory"
+import { 
+  VictoryChart, 
+  VictoryAxis, 
+  VictoryBar, 
+  VictoryVoronoiContainer,
+  VictoryLine,
+VictoryTooltip,
+VictoryLabel,
+VictoryTheme
+ } from "victory"
 import { Link, useParams } from "react-router-dom";
 import { Dish } from "../../components/dish";
-import { DISH_FRAGMENT, RESTAURANT_FRAGMENT } from "../../fragment";
+import { DISH_FRAGMENT, ORDERS_FRAGMENT, RESTAURANT_FRAGMENT } from "../../fragment";
 import {
   myRestaurant,
   myRestaurantVariables,
@@ -20,11 +29,15 @@ export const MY_RESTAURANT_QUERY = gql`
         menu {
           ...DishParts
         }
+        orders {
+          ...OrderParts
+        }
       }
     }
   }
   ${RESTAURANT_FRAGMENT}
   ${DISH_FRAGMENT}
+  ${ORDERS_FRAGMENT}
 `;
 
 
@@ -86,23 +99,45 @@ export const MyRestaurant = () => {
         </div>
         <div className="mt-20 mb-10">
           <h4 className="text-center text-2xl font-medium">Sales</h4>
-          <div className=" max-w-lg w-full mx-auto">
-            <VictoryChart domainPadding={20}>
+          <div className="  mt-10">
+            <VictoryChart
+              height={500}
+              theme={VictoryTheme.material}
+              width={window.innerWidth}
+              domainPadding={50}
+              containerComponent={<VictoryVoronoiContainer />}
+            >
+              <VictoryLine
+              //VictoryBar는 데이터 세트를 일련의 막대로 렌더링
+                labels={({ datum }) => `$${datum.y}`}
+                labelComponent={
+                  <VictoryLabel
+                    style={{ fontSize: 18 } as any}
+                    renderInPortal
+                    dy={-20}
+                  />
+                }
+                data={data?.myRestaurant.restaurant?.orders.map((order) => ({
+                  x: order.createdAt,
+                  y: order.total,
+                }))}
+                interpolation="natural"
+                style={{
+                  data: {
+                    strokeWidth: 5,
+                  },
+                }}
+              />
               <VictoryAxis
               //VictoryAxis는 단독 or VictoryChart로 구성할 수 있는 단일 축을 렌더링
-                label="Amount of Money"
-                dependentAxis
-                tickValues={[20, 30, 40, 50, 60]}
-              />
-              <VictoryAxis label="Days of Life" />
-              <VictoryBar
-              //VictoryBar는 데이터 세트를 일련의 막대로 렌더링
-                data={[
-                  { x: 10, y: 20 },
-                  { x: 20, y: 5 },
-                  { x: 35, y: 55 },
-                  { x: 45, y: 99 },
-                ]}
+              
+                tickLabelComponent={<VictoryLabel renderInPortal />}
+                style={{
+                  tickLabels: {
+                    fontSize: 20,
+                  } as any,
+                }}
+                tickFormat={(tick) => new Date(tick).toLocaleDateString("ko")}
               />
             </VictoryChart>
           </div>

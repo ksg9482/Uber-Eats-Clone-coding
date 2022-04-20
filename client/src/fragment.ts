@@ -42,4 +42,12 @@ export const DISH_FRAGMENT = gql`
   }
 `;
 
+export const ORDERS_FRAGMENT = gql`
+  fragment OrderParts on Order {
+    id
+    createdAt
+    total
+  }
+`;
+
 //fragment만든 이유? 여러 쿼리문에 중복되는게 있다 -> 따로 빼서 불러오게 만든다
