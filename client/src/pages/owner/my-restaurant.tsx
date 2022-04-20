@@ -1,7 +1,9 @@
 import { gql, useQuery } from "@apollo/client";
 import React from "react";
 import { Helmet } from "react-helmet-async";
+import { VictoryChart, VictoryAxis, VictoryBar } from "victory"
 import { Link, useParams } from "react-router-dom";
+import { Dish } from "../../components/dish";
 import { DISH_FRAGMENT, RESTAURANT_FRAGMENT } from "../../fragment";
 import {
   myRestaurant,
@@ -70,7 +72,40 @@ export const MyRestaurant = () => {
         <div className="mt-10">
           {data?.myRestaurant.restaurant?.menu.length === 0 ? (
             <h4 className="text-xl mb-5">Please upload a dish!</h4>
-          ) : null}
+          ) : (
+            <div className="grid mt-16 md:grid-cols-3 gap-x-5 gap-y-10">
+              {data?.myRestaurant.restaurant?.menu.map((dish) => (
+                <Dish
+                  name={dish.name}
+                  description={dish.description}
+                  price={dish.price}
+                />
+              ))}
+            </div>
+          )}
+        </div>
+        <div className="mt-20 mb-10">
+          <h4 className="text-center text-2xl font-medium">Sales</h4>
+          <div className=" max-w-lg w-full mx-auto">
+            <VictoryChart domainPadding={20}>
+              <VictoryAxis
+              //VictoryAxis는 단독 or VictoryChart로 구성할 수 있는 단일 축을 렌더링
+                label="Amount of Money"
+                dependentAxis
+                tickValues={[20, 30, 40, 50, 60]}
+              />
+              <VictoryAxis label="Days of Life" />
+              <VictoryBar
+              //VictoryBar는 데이터 세트를 일련의 막대로 렌더링
+                data={[
+                  { x: 10, y: 20 },
+                  { x: 20, y: 5 },
+                  { x: 35, y: 55 },
+                  { x: 45, y: 99 },
+                ]}
+              />
+            </VictoryChart>
+          </div>
         </div>
       </div>
     </div>
