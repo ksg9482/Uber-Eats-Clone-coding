@@ -317,6 +317,7 @@ export class RestaurantsService {
     ): Promise<CreateDishOutput> {
 
         try {
+            
             const restaurant = await this.restaurants.findOne(createDishInput.restaurantId);
             if (!restaurant) {
                 return {
@@ -330,17 +331,16 @@ export class RestaurantsService {
                     error: "you can't do that"
                 };
             };
-
-            const dish = await this.dishes.save(this.dishes.create({ ...CreateDishInput, restaurant }))
+            const dish = await this.dishes.save(this.dishes.create({ ...createDishInput, restaurant }));
             return {
                 ok: true
-            }
+            };
 
         } catch (error) {
             return {
                 ok: false,
                 error: 'could not create dish'
-            }
+            };
         }
     };
 
