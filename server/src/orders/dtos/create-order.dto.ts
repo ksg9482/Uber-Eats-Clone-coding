@@ -6,7 +6,7 @@ import { OrderItemOption } from "../entities/order-item.entity";
 class CreateOrderItemInput {
 
     @Field(type => Number)
-    dishID: number;
+    dishId: number;
 
     @Field(type => [OrderItemOption], {nullable: true})
     options?: OrderItemOption[];
@@ -16,7 +16,7 @@ class CreateOrderItemInput {
 export class CreateOrderInput { //PickType을 쓰지 않는이유 -> OrderItem전체를 Input으로 하지 않기 위해
 
     @Field(type => Number)
-    restaurnatId: number;
+    restaurantId: number;
 
     @Field(type => [CreateOrderItemInput])
     items: CreateOrderItemInput[];
@@ -25,5 +25,6 @@ export class CreateOrderInput { //PickType을 쓰지 않는이유 -> OrderItem�
 
 @ObjectType()
 export class CreateOrderOutput extends CoreOutput {
-
+    @Field(type => Number, {nullable:true})
+    orderId?: number;
 }

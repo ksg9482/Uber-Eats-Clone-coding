@@ -31,10 +31,10 @@ export class OrdersService {
 
     async createOrder(
         customer: User,
-        { restaurnatId, items }: CreateOrderInput
+        { restaurantId, items }: CreateOrderInput
     ): Promise<CreateOrderOutput> {
         try {
-            const restaurant = await this.restaurants.findOne(restaurnatId);
+            const restaurant = await this.restaurants.findOne(restaurantId);
             if (!restaurant) {
                 return {
                     ok: false,
@@ -47,7 +47,7 @@ export class OrdersService {
 
             //items.forEach(async item => {
             for (const item of items) {
-                const dish = await this.dishes.findOne(item.dishID)
+                const dish = await this.dishes.findOne(item.dishId)
                 if (!dish) {
                     return {
                         ok: false,
@@ -123,7 +123,8 @@ export class OrdersService {
             //그러나 밑의 editOrder 쪽에선 아니다.
 
             return {
-                ok: true
+                ok: true,
+                orderId:order.id
             }
         } catch (error) {
             return {
