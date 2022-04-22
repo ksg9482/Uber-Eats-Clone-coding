@@ -49,7 +49,7 @@ export const DashBoard = () => {
                         lat: 36.58,
                         lng: 125.95
                     }}
-                    bootstrapURLKeys={{ key: "AIzaSyDDOHNKASINHVtFzyVTtjs4OADOb5i48Eo" }}
+                    bootstrapURLKeys={{ key: "임시보안" }}
                 >
                     <div
                         // @ts-ignore
