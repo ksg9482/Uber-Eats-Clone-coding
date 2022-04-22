@@ -40,11 +40,12 @@ import { UploadsModule } from './uploads/uploads.module';
         DB_USERNAME: Joi.string().required(),
         DB_PASSWORD: Joi.string().required(),
         DB_NAME: Joi.string().required(),
-        //
         PRIVATE_KEY: Joi.string().required(),
         MAILGUN_API_KEY: Joi.string().required(),
         MAILGUN_DOMAIN_NAME: Joi.string().required(),
-        MAILGUN_FROMEMAIL: Joi.string().required()
+        MAILGUN_FROMEMAIL: Joi.string().required(),
+        AWS_ACCESS_KEY:Joi.string().required(),
+        AWS_SECRET_ACCESS_KEY:Joi.string().required()
       })
     }),
     GraphQLModule.forRoot/*<ApolloDriverConfig>*/({//nestjs에 graphql을 적용함

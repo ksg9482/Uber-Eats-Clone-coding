@@ -76,7 +76,7 @@ export class OrdersService {
                             //for 루프 안에 있기 때문에 각 dish에서 실행된다
                         }
                     } else {
-                        const dishOptionChoice = dishOption.choices.find(
+                        const dishOptionChoice = dishOption.choices?.find(
                             optionChoice => optionChoice.name === itemOption.choice
                         );
                         if (dishOptionChoice) {

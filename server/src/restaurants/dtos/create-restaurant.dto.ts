@@ -25,26 +25,5 @@ export class CreateRestaurantOutput extends CoreOutput {
     
     
     
-    
-    // @Field(type => String) 
-    // @IsString()
-    // @Length(3, 10)
-    // name: string;
-
-    // @Field(type => Boolean) 
-    // @IsBoolean()
-    // isVegan: boolean;
-
-    // @Field(type => String) 
-    // @IsString()
-    // address: string;
-
-    // @Field(type => String)
-    // @IsString() 
-    // ownersName: string;
-
-    // @Field(type => String)
-    // @IsString() 
-    // categoryName: string;
 
 
