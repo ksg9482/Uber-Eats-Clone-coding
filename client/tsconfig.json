@@ -9,6 +9,7 @@
     "types": [
       "react/next", 
       "react-dom/next", 
+      "googlemaps"
     ] ,
     "allowJs": true,
     "skipLibCheck": true,
