@@ -44,7 +44,6 @@ export const Login = () => {
         //onSubmit은 submit이벤트가 일어나고 valid체크를 하니 늦다
     });
     const onCompleted = (data: logInMutaion) => {
-        console.log(data)
         const { login: {
             ok,
             error,
@@ -84,7 +83,6 @@ export const Login = () => {
     );
     //data는 mutation으로부터 되돌아 온다. loading은 mutation이 실행되고 있다는 뜻. error는 mutation이 error를 반환한다는 뜻
     const onSubmit = () => {
-        console.log('ok!!')
         if (!loading) {
             const { email, password } = getValues();
             loginMutaion({

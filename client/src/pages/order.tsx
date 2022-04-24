@@ -54,7 +54,7 @@ export const Order = () => {
     });
 
     const [editOrderMutation] = useMutation<editOrder, editOrderVariables>(EDIT_ORDER);
-    const {data:userData} = useMe();
+    const { data: userData } = useMe();
 
 
     useEffect(() => {
@@ -158,6 +158,31 @@ export const Order = () => {
                                     </span>
                                 )}
                         </>
+                    )}
+                    {userData?.me.role === UserRole.Delivery && (
+                        <>
+                            {data?.getOrder.order?.status === OrderStatus.Cooked && (
+                                <button
+                                    onClick={() => onButtonClick(OrderStatus.PickedUp)}
+                                    className="btn"
+                                >
+                                    Picked Up
+                                </button>
+                            )}
+                            {data?.getOrder.order?.status === OrderStatus.PickedUp && (
+                                <button
+                                    onClick={() => onButtonClick(OrderStatus.Delivered)}
+                                    className="btn"
+                                >
+                                    Order Delivered
+                                </button>
+                            )}
+                        </>
+                    )}
+                    {data?.getOrder.order?.status === OrderStatus.Delivered && (
+                        <span className=" text-center mt-5 mb-3  text-2xl text-lime-600">
+                            Thank you for using Nuber Eats
+                        </span>
                     )}
                 </div>
             </div>

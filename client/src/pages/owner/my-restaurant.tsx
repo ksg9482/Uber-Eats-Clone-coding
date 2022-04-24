@@ -72,6 +72,7 @@ export const MyRestaurant = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    console.log(subscriptionData)
     if(subscriptionData?.pendingOrders.id) {
       navigate(`/orders/${subscriptionData?.pendingOrders.id}`);
     }

@@ -6,34 +6,34 @@
 import { OrderStatus } from "./globalTypes";
 
 // ====================================================
-// GraphQL subscription operation: coockedOrder
+// GraphQL subscription operation: cookedOrder
 // ====================================================
 
-export interface coockedOrder_cookedOrder_driver {
+export interface cookedOrder_cookedOrder_driver {
   __typename: "User";
   email: string;
 }
 
-export interface coockedOrder_cookedOrder_customer {
+export interface cookedOrder_cookedOrder_customer {
   __typename: "User";
   email: string;
 }
 
-export interface coockedOrder_cookedOrder_restaurant {
+export interface cookedOrder_cookedOrder_restaurant {
   __typename: "Restaurant";
   name: string;
 }
 
-export interface coockedOrder_cookedOrder {
+export interface cookedOrder_cookedOrder {
   __typename: "Order";
   id: number;
   status: OrderStatus;
   total: number | null;
-  driver: coockedOrder_cookedOrder_driver | null;
-  customer: coockedOrder_cookedOrder_customer | null;
-  restaurant: coockedOrder_cookedOrder_restaurant | null;
+  driver: cookedOrder_cookedOrder_driver | null;
+  customer: cookedOrder_cookedOrder_customer | null;
+  restaurant: cookedOrder_cookedOrder_restaurant | null;
 }
 
-export interface coockedOrder {
-  cookedOrder: coockedOrder_cookedOrder;
+export interface cookedOrder {
+  cookedOrder: cookedOrder_cookedOrder;
 }

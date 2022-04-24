@@ -59,7 +59,6 @@ export const AddDish = () => {
           name: rest[`${theId}-optionName`],
           extra: + rest[`${theId}-optionExtra`],
         }));
-        console.log(restaurantId)
         createDishMutation({
             variables: {
                 input: {
