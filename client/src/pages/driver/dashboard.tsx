@@ -138,7 +138,6 @@ export const DashBoard = () => {
       );
     }
   };
-
   const { data: cookedOrdersData } = useSubscription<cookedOrder>(
     COOCKED_ORDERS_SUBSCRIPTION
   );

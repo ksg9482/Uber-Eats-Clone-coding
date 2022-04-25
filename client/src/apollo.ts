@@ -10,6 +10,8 @@ import {
   } from "@apollo/client";
 import { setContext } from "@apollo/client/link/context"
 import { WebSocketLink } from "@apollo/client/link/ws";
+import { GraphQLWsLink } from '@apollo/client/link/subscriptions';
+import { createClient } from 'graphql-ws';
 import { getMainDefinition } from "@apollo/client/utilities";
 import { LOCALSTORAGE_TOKEN } from "./constants";
 
@@ -19,15 +21,21 @@ export const isLoggedInVar = makeVar(Boolean(token))
 export const authTokenVar = makeVar(token)
 //맨처음: isLoggedInVar는 false, authToken는 null이다
 
-const wsLink = new WebSocketLink({
-  uri: `ws://localhost:4000/graphql`,
-  options: {
-    reconnect: true,
-    connectionParams: {
-      "x-jwt": authTokenVar() || "",
-    },
-  },
-})
+const wsLink = new GraphQLWsLink(createClient({
+  url: 'ws://localhost:4000/graphql',
+  connectionParams: {
+    "x-jwt": authTokenVar() || ""
+  }
+}));
+// const wsLink = new WebSocketLink({
+//   uri: `ws://localhost:4000/graphql`,
+//   options: {
+//     reconnect: true,
+//     connectionParams: {
+//       "x-jwt": authTokenVar() || "",
+//     },
+//   },
+// })
 
 const httpLink = createHttpLink({
   uri: 'http://localhost:4000/graphql'
