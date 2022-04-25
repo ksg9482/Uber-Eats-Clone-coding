@@ -359,7 +359,6 @@ describe('UserModule (e2e)', () => {
         )
         .expect(200)
         .expect(res => {
-          console.log(res.body)
           const {
             body: {
               data: {

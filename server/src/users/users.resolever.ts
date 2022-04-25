@@ -32,7 +32,7 @@ export class UsersResolver {
     @Query(returns => User)
     @Role(['Any'])
     me(@AuthUser() authUser: User) {//AuthUser는 현재 로그인 한 사용자에 대한 정보를 준다
-        console.log(authUser)
+        //console.log(authUser)
         return authUser;
     }
 

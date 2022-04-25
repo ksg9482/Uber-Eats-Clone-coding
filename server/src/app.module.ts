@@ -57,7 +57,6 @@ import { UploadsModule } from './uploads/uploads.module';
       subscriptions: {
         'subscriptions-transport-ws': {
         onConnect: (connectionParams) => {
-          console.log(connectionParams)
         const TOKEN_KEY = "x-jwt";
         const token = connectionParams[TOKEN_KEY]
         return {token}

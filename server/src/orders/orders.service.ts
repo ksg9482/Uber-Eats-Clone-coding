@@ -81,7 +81,6 @@ export class OrdersService {
                         );
                         if (dishOptionChoice) {
                             if (dishOptionChoice.extra) {
-                                console.log(dishOptionChoice.extra)
                             }
                         }
                     };
