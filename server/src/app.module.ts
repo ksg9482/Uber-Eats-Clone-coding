@@ -35,17 +35,17 @@ import { UploadsModule } from './uploads/uploads.module';
       validationSchema: Joi.object({
         NODE_ENV: Joi.string().valid('dev', 'production', 'test').required(),
         //required제거. heroku에 없음
-        DB_HOST: Joi.string().required(),
-        DB_PORT: Joi.string().required(),
-        DB_USERNAME: Joi.string().required(),
-        DB_PASSWORD: Joi.string().required(),
-        DB_NAME: Joi.string().required(),
-        PRIVATE_KEY: Joi.string().required(),
-        MAILGUN_API_KEY: Joi.string().required(),
-        MAILGUN_DOMAIN_NAME: Joi.string().required(),
-        MAILGUN_FROMEMAIL: Joi.string().required(),
-        AWS_ACCESS_KEY:Joi.string().required(),
-        AWS_SECRET_ACCESS_KEY:Joi.string().required()
+        DB_HOST: Joi.string(),
+        DB_PORT: Joi.string(),
+        DB_USERNAME: Joi.string(),
+        DB_PASSWORD: Joi.string(),
+        DB_NAME: Joi.string(),
+        PRIVATE_KEY: Joi.string(),
+        MAILGUN_API_KEY: Joi.string(),
+        MAILGUN_DOMAIN_NAME: Joi.string(),
+        MAILGUN_FROMEMAIL: Joi.string(),
+        AWS_ACCESS_KEY:Joi.string(),
+        AWS_SECRET_ACCESS_KEY:Joi.string()
       })
     }),
     GraphQLModule.forRoot/*<ApolloDriverConfig>*/({//nestjs에 graphql을 적용함
@@ -77,19 +77,19 @@ import { UploadsModule } from './uploads/uploads.module';
     TypeOrmModule.forRoot({
       type: "postgres",
       // 헤로쿠 연결시
-      // ...(process.env.DATABASE_URL 
-      //   ? {url: process.env.DATABASE_URL} 
-      //   : {host: process.env.DB_HOST, //wsl2때문. 보통 localhost
-      //   port: +process.env.DB_PORT,
-      //   username: process.env.DB_USERNAME,
-      //   password: process.env.DB_PASSWORD,
-      //   database: process.env.DB_NAME,
-      // }),
-      host: process.env.DB_HOST, //wsl2때문. 보통 localhost
-      port: +process.env.DB_PORT,
-      username: process.env.DB_USERNAME,
-      password: process.env.DB_PASSWORD,
-      database: process.env.DB_NAME,
+      ...(process.env.DATABASE_URL 
+        ? {url: process.env.DATABASE_URL} 
+        : {host: process.env.DB_HOST, //wsl2때문. 보통 localhost
+        port: +process.env.DB_PORT,
+        username: process.env.DB_USERNAME,
+        password: process.env.DB_PASSWORD,
+        database: process.env.DB_NAME,
+      }),
+      // host: process.env.DB_HOST, //wsl2때문. 보통 localhost
+      // port: +process.env.DB_PORT,
+      // username: process.env.DB_USERNAME,
+      // password: process.env.DB_PASSWORD,
+      // database: process.env.DB_NAME,
       synchronize: process.env.NODE_ENV !== 'prod', //데이터베이스를 내 모듈의 현재 상태로 마이그레이션한다는 뜻
       //process.env.NODE_ENV !== 'prod'로 하면 prod가 아닐때만 true
       logging: process.env.NODE_ENV !== 'prod' && process.env.NODE_ENV !== 'test',
