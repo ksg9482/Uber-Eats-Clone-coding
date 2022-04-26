@@ -62,7 +62,6 @@ export class OrdersResolver {
     
     @Subscription(returns => Order, {
         filter: ({pendingOrders: {ownerId}}, _, {user}) => {
-            console.log(ownerId, user.id)
             return ownerId === user.id //true라면 이 subscription을 listening하고 있는 유저가 order를 보게된다
         },
         resolve: ({pendingOrders: {order}}) => order

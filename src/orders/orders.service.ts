@@ -113,10 +113,10 @@ export class OrdersService {
                     //주의: items는 many to many 관계!
                 })
             );
-
+                console.log("pendingOrders:", { order, ownerId: restaurant.ownerId })
             await this.pubSub.publish(NEW_PENDING_ORDER, {
                 pendingOrders: { order, ownerId: restaurant.ownerId }
-            })
+            });
             //payload는 resolver의 이름
             //이 order를 subscription으로 곧장 보내도 문제는 없었다
             //그러나 밑의 editOrder 쪽에선 아니다.
