@@ -1,73 +1,45 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo_text.svg" width="320" alt="Nest Logo" /></a>
-</p>
+# 📰 Yuber-Eats - Nomadcoders 우버이츠 클론코딩
+## 풀스택
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## 유저 타입에 따른 페이지 구성
 
-## Description
+### Client
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
 
-## Installation
+### Owner
 
-```bash
-$ npm install
-```
 
-## Running the app
+### Driver
 
-```bash
-# development
-$ npm run start
 
-# watch mode
-$ npm run start:dev
 
-# production mode
-$ npm run start:prod
-```
 
-## Test
 
-```bash
-# unit tests
-$ npm run test
+***
+# 기술 스택 - Back
+   
 
-# e2e tests
-$ npm run test:e2e
+![](https://img.shields.io/badge/BACK-Node.js-339933?style=for-the-badge&logo=Node.js)   
+![](https://img.shields.io/badge/BACK-NestJs-E0234E?style=for-the-badge&logo=NestJs)   
+![](https://img.shields.io/badge/BACK-Apollo%20Server-311C87?style=for-the-badge&logo=ApolloGraphQL)   
+![](https://img.shields.io/badge/BACK-GraphQL-E10098?style=for-the-badge&logo=GraphQL)   
+![](https://img.shields.io/badge/BACK-Jest-C21325?style=for-the-badge&logo=Jest)   
+![](https://img.shields.io/badge/BACK-TypeScript-3178C6?style=for-the-badge&logo=TypeScript)   
+![](https://img.shields.io/badge/BACK-Typeorm-4169E1?style=for-the-badge&logo=PostgreSQL)   
+![](https://img.shields.io/badge/BACK-JsonWebToken-000000?style=for-the-badge&logo=JSONWebTokens)   
+  
+   
+### 기술스택에 따른 강점
+* Typescript를 사용하여 Frontend와 Backend간에 주고 받는 데이터의 안정성을 보강합니다.
+  * Frontend측에서 입력한 데이터는 Server와 Database에 이르기까지 의도한 데이터 타입이 보장됩니다.
+* GraphQL을 사용하여 Frontend에서 필요한 데이터만을 요청할 수 있습니다.
+* JsonWebToken을 사용하여 보안을 강화합니다.
+* Jest를 사용하여 Unit Test와 E2E Test를 작성합니다.
+  * Test를 통해 코드를 검증하여 에러 발생을 줄일 수 있습니다. 
 
-# test coverage
-$ npm run test:cov
-```
 
-## Support
+***
+# ⚙️ System Architecture
+![image](https://user-images.githubusercontent.com/87490361/146557427-bd69f7b8-a5a1-4692-8622-4ea6a9cdc369.png)
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](LICENSE).
