@@ -113,7 +113,7 @@ export class OrdersService {
                     //주의: items는 many to many 관계!
                 })
             );
-                console.log("pendingOrders:", { order, ownerId: restaurant.ownerId })
+                
             await this.pubSub.publish(NEW_PENDING_ORDER, {
                 pendingOrders: { order, ownerId: restaurant.ownerId }
             });
@@ -140,14 +140,14 @@ export class OrdersService {
         try {
             let orders: Order[];
             if (user.role === UserRole.Client) {
-                const Orders = await this.orders.find({
+                orders = await this.orders.find({
                     where: {
                         customer: user,
                         ...(status && { status }) //object에 조건부로 property를 추가
                     }
                 });
             } else if (user.role === UserRole.Delivery) {
-                const Orders = await this.orders.find({
+                orders = await this.orders.find({
                     where: {
                         driver: user,
                         ...(status && { status })
