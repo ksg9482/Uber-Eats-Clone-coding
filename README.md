@@ -5,13 +5,15 @@
 ## 유저 타입에 따른 페이지 구성
 
 ### Client
+* 카테고리 별로 등록된 레스토랑을 확인 가능합니다.
 
 
 ### Owner
+* 레스토랑에 메뉴를 자유롭게 설정할 수 있습니다.
 
 
 ### Driver
-
+* Google Map API기반으로 된 지도를 통해 경로를 확인할 수 있습니다
 
 
 
@@ -38,8 +40,4 @@
 * Jest를 사용하여 Unit Test와 E2E Test를 작성합니다.
   * Test를 통해 코드를 검증하여 에러 발생을 줄일 수 있습니다. 
 
-
-***
-# ⚙️ System Architecture
-![image](https://user-images.githubusercontent.com/87490361/146557427-bd69f7b8-a5a1-4692-8622-4ea6a9cdc369.png)
 
