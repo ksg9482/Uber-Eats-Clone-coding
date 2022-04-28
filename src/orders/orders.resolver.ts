@@ -23,11 +23,12 @@ export class OrdersResolver {
     ){}
 
     @Mutation(returns => CreateOrderOutput)
-    @Role(["Client"])
+    @Role(['Any'])
     async createOrder(
         @AuthUser() customer: User, 
         @Args('input') createOrderInput: CreateOrderInput
     ): Promise<CreateOrderOutput> {
+        console.log('내용:',customer, createOrderInput)
         return this.ordersService.createOrder(customer, createOrderInput)
     }
 

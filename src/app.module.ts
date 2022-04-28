@@ -47,25 +47,23 @@ import { UploadsModule } from './uploads/uploads.module';
     GraphQLModule.forRoot/*<ApolloDriverConfig>*/({//nestjs에 graphql을 적용함
       //driver: ApolloDriver,
       autoSchemaFile: true,
-      introspection:true,
+      //introspection:true,
       playground: process.env.NODE_ENV !== "production",
       installSubscriptionHandlers: true,
-      subscriptions: {
-        'subscriptions-transport-ws': {
-        onConnect: (connectionParams) => {
-        const TOKEN_KEY = "x-jwt";
-        const token = connectionParams[TOKEN_KEY]
-        return {token}
-        }
-        }
+      context: ({ req, connection }) => {
+        const TOKEN_KEY = 'x-jwt';
+        return {
+          token: req ? req.headers[TOKEN_KEY] : connection.context[TOKEN_KEY],
+        };
+      },
         // 'graphql-ws': {
         //   onConnect: (context: Context<any>) => {
         //     const { connectionParams, extra } = context;
         //     console.log(connectionParams, extra)
         //   }
         // }
-        },
-      context: ({ req }) => ({ token: req.headers['x-jwt']  })
+        
+      
         
         //request user를 graphql resolver의 context를 통해 공유하는 것
       //connection 웹소켓에는 다른 프로토콜이 필요하다. 웹소켓엔 request가 없고 이게있다.
